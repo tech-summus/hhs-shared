@@ -27,4 +27,8 @@
         <PackageReference Include="prometheus-net.AspNetCore" Version="8.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    </ItemGroup>
+
 </Project>
