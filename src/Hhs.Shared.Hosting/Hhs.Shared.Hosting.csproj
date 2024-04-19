@@ -1,9 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+    <Import Project="..\..\common.version.props" />
+    <Import Project="..\..\common.props" />
+
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <PackageId>Hhs.Shared.Hosting</PackageId>
+        <RootNamespace>Hhs.Shared.Hosting</RootNamespace>
+        <Title>TechSummus HHS Shared Hosting</Title>
+        <Description>TechSummus HHS Shared Hosting</Description>
+        <PackageTags>TechSummus HHS Shared Hosting</PackageTags>
     </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+        <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(MicrosoftAspNetCorePackageVersion)" />
+        <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+        <PackageReference Include="prometheus-net.AspNetCore" Version="8.1.0" />
+    </ItemGroup>
 
 </Project>

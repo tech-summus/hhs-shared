@@ -1,9 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+    <Import Project="..\..\common.version.props" />
+    <Import Project="..\..\common.props" />
+
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <PackageId>Hhs.Shared.Helper</PackageId>
+        <RootNamespace>Hhs.Shared.Helper</RootNamespace>
+        <Title>TechSummus HHS Shared Helper</Title>
+        <Description>TechSummus HHS Shared Helper</Description>
+        <PackageTags>TechSummus HHS Shared Helper</PackageTags>
     </PropertyGroup>
 
 </Project>

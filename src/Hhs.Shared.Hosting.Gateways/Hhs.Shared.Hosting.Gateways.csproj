@@ -1,13 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+    <Import Project="..\..\common.version.props" />
+    <Import Project="..\..\common.props" />
+
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <PackageId>Hhs.Shared.Hosting.Gateways</PackageId>
+        <RootNamespace>Hhs.Shared.Hosting.Gateways</RootNamespace>
+        <Title>TechSummus HHS Shared Hosting Gateways</Title>
+        <Description>TechSummus HHS Shared Hosting Gateways</Description>
+        <PackageTags>TechSummus HHS Shared Hosting Gateways</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Hhs.Shared.Hosting\Hhs.Shared.Hosting.csproj" />
+        <PackageReference Include="MMLib.Ocelot.Provider.AppConfiguration" Version="2.0.0" />
+        <PackageReference Include="MMLib.SwaggerForOcelot" Version="6.3.2" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Ocelot" Version="18.0.0" />
+        <!--<PackageReference Include="Ocelot.Provider.Polly" Version="17.0.1" />-->
+        <!--<PackageReference Include="Ocelot.Provider.Consul" Version="18.0.0" />-->
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Hhs.Shared.Hosting\Hhs.Shared.Hosting.csproj" />
+    </ItemGroup>
 </Project>

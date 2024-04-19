@@ -1,13 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+    <Import Project="..\..\common.version.props" />
+    <Import Project="..\..\common.props" />
+
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <PackageId>Hhs.Shared.Hosting.Microservices</PackageId>
+        <RootNamespace>Hhs.Shared.Hosting.Microservices</RootNamespace>
+        <Title>TechSummus HHS Shared Hosting Microservices</Title>
+        <Description>TechSummus HHS Shared Hosting Microservices</Description>
+        <PackageTags>TechSummus HHS Shared Hosting Microservices</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Hhs.Shared.Hosting\Hhs.Shared.Hosting.csproj" />
+        <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="7.0.0" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.1.0" />
+        <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="7.1.0" />
+        <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="7.0.0" />
+        <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="7.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="$(MicrosoftAspNetCorePackageVersion)" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Hhs.Shared.Hosting\Hhs.Shared.Hosting.csproj" />
+    </ItemGroup>
 </Project>
