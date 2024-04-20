@@ -23,6 +23,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="HsnSoft.Base.EventBus.RabbitMQ" Version="$(HsnSoftFrameworkVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Hhs.Shared.Hosting\Hhs.Shared.Hosting.csproj" />
     </ItemGroup>
 </Project>

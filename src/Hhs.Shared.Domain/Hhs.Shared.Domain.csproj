@@ -13,4 +13,8 @@
         <PackageTags>TechSummus HHS Shared Domain</PackageTags>
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="HsnSoft.Base.Ddd.Application.Contracts" Version="$(HsnSoftFrameworkVersion)" />
+    </ItemGroup>
+
 </Project>
