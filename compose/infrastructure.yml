@@ -1,35 +1,35 @@
 version: '3.7'
 
 services:
-    
-    infra-mongo:
-        container_name: infra-mongo_container
+
+    hhs-infra-mongo:
+        container_name: hhs-infra-mongo_container
         image: mongo:5.0.15
-        hostname: infra_mongo_node_1
+        hostname: hhs_mongo_node_1
         restart: always
         volumes:
-            - $HOME/docker-volumes/infra/mongo/mongo_data_db:/data/db
-            - $HOME/docker-volumes/infra/mongo/mongo_data_config:/data/configdb
-            - $HOME/docker-volumes/infra/mongo/mongo_db:/mongodb
+            - $HOME/docker-volumes/hhs/mongo/mongo_data_db:/data/db
+            - $HOME/docker-volumes/hhs/mongo/mongo_data_config:/data/configdb
+            - $HOME/docker-volumes/hhs/mongo/mongo_db:/mongodb
         networks:
-            - infra-network
+            - hhs-network
         ports:
             - "31017:27017"
 
-    infra-postgres:
-        container_name: infra-postgres_container
+    hhs-infra-postgres:
+        container_name: hhs-infra-postgres_container
         image: postgres:latest
-        hostname: infra_postgres_node_1
+        hostname: hhs_postgres_node_1
         restart: always
         logging:
             options:
                 max-size: 10m
                 max-file: "3"
         volumes:
-            - $HOME/docker-volumes/infra/postgres/postgresql:/var/lib/postgresql
-            - $HOME/docker-volumes/infra/postgres/postgresql_data:/var/lib/postgresql/data
+            - $HOME/docker-volumes/hhs/postgres/postgresql:/var/lib/postgresql
+            - $HOME/docker-volumes/hhs/postgres/postgresql_data:/var/lib/postgresql/data
         networks:
-            - infra-network
+            - hhs-network
         ports:
             - "35432:5432"
         environment:
@@ -40,33 +40,33 @@ services:
             LANG: "en_US.utf8"
             POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale-provider=icu --icu-locale=en_US"
 
-    infra-redis:
-        container_name: infra-redis_container
+    hhs-infra-redis:
+        container_name: hhs-infra-redis_container
         image: redis:latest
-        hostname: infra_redis_node_1
+        hostname: hhs_redis_node_1
         restart: always
         volumes:
-            - $HOME/docker-volumes/infra/redis/redis_data:/data
+            - $HOME/docker-volumes/hhs/redis/redis_data:/data
         networks:
-            - infra-network
+            - hhs-network
         ports:
             - "36379:6379"
 
-    infra-rabbitmq:
-        container_name: infra-rabbitmq_container
+    hhs-infra-rabbitmq:
+        container_name: hhs-infra-rabbitmq_container
         image: rabbitmq:3-management
-        hostname: infra_rabbit_node_1
+        hostname: hhs_rabbit_node_1
         restart: always
         volumes:
-            - $HOME/docker-volumes/infra/rabbitmq/rabbitmq_data:/var/lib/rabbitmq
+            - $HOME/docker-volumes/hhs/rabbitmq/rabbitmq_data:/var/lib/rabbitmq
         networks:
-            - infra-network
+            - hhs-network
         ports:
             - "35672:5672" #amqp port
             - "45672:15672" # management web console
 
 networks:
-    infra-network:
-        name: infrastructure-network
+    hhs-network:
+        name: hhs.infrastructure-network
         driver: bridge
         external: true
