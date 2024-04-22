@@ -22,8 +22,8 @@ public sealed class GlobalExceptionHandlerMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        // Temporarily replace the HttpResponseStream, 
-        // which is a write-only stream, with a MemoryStream to capture 
+        // Temporarily replace the HttpResponseStream,
+        // which is a write-only stream, with a MemoryStream to capture
         // its value in-flight.
         var response = context.Response;
         var originalResponseBody = response.Body;
@@ -45,7 +45,7 @@ public sealed class GlobalExceptionHandlerMiddleware : IMiddleware
             Logger.Error("GlobalExceptionHandlerMiddleware -> Error Message: {ErrorMessage}", exception.Message);
             var (code, messages) = _handler.Handle(exception, _env);
             response.StatusCode = code;
-            await response.WriteAsJsonAsync(new DtoResponse(messages, code));
+            await response.WriteAsJsonAsync(new BaseResponse { StatusCode = code, StatusMessages = messages });
 
             #endregion
         }
@@ -77,7 +77,11 @@ public sealed class GlobalExceptionHandlerMiddleware : IMiddleware
                 #endregion
             }
 
-            await response.WriteAsJsonAsync(new DtoResponse(_handler.GetStatusCodeDescription(response.StatusCode), response.StatusCode));
+            await response.WriteAsJsonAsync(new BaseResponse
+            {
+                StatusCode = response.StatusCode,
+                StatusMessages = new List<string> { _handler.GetStatusCodeDescription(response.StatusCode) }
+            });
         }
 
         if (!_env.IsProduction() && response.StatusCode >= 400)
