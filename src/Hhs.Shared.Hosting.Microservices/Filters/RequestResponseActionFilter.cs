@@ -49,7 +49,10 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
             messages.AddRange(from error in errorsInModelState from subError in error.Value select $"{error.Key}: {subError}");
         }
 
-        context.Result = new ContentResult { Content = new DtoResponse(messages, (int)HttpStatusCode.BadRequest).ToJsonString(), StatusCode = (int)HttpStatusCode.BadRequest, ContentType = "application/json" };
+        context.Result = new ContentResult
+        {
+            Content = new BaseResponse { StatusCode = (int)HttpStatusCode.BadRequest, StatusMessages = messages }.ToJsonString(), StatusCode = (int)HttpStatusCode.BadRequest, ContentType = "application/json"
+        };
     }
 
     public void OnActionExecuted(ActionExecutedContext context)
@@ -64,7 +67,7 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
             context.Exception = null!;
             context.ExceptionDispatchInfo = null!;
             context.ExceptionHandled = true;
-            context.Result = new ContentResult { Content = new DtoResponse(messages, code).ToJsonString(), StatusCode = code, ContentType = "application/json" };
+            context.Result = new ContentResult { Content = new BaseResponse { StatusCode = code, StatusMessages = messages }.ToJsonString(), StatusCode = code, ContentType = "application/json" };
         }
         else // Manipulate response data
         {
@@ -74,8 +77,21 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
 
             var newContent = context.Result switch
             {
-                ObjectResult or => JsonSerializer.Serialize(new DtoResponse<object>(payload: or.Value, message: _handler.GetStatusCodeDescription((int)HttpStatusCode.OK), code: (int)HttpStatusCode.OK)),
-                EmptyResult => JsonSerializer.Serialize(new DtoResponse(message: _handler.GetStatusCodeDescription((int)HttpStatusCode.OK), code: (int)HttpStatusCode.OK)),
+                ObjectResult or => JsonSerializer.Serialize(
+                    new BaseResponse<object>
+                    {
+                        StatusCode = (int)HttpStatusCode.OK,
+                        StatusMessages = new List<string> { _handler.GetStatusCodeDescription((int)HttpStatusCode.OK) },
+                        Payload = or.Value
+                    }
+                ),
+                EmptyResult => JsonSerializer.Serialize(
+                    new BaseResponse
+                    {
+                        StatusCode = (int)HttpStatusCode.OK,
+                        StatusMessages = new List<string> { _handler.GetStatusCodeDescription((int)HttpStatusCode.OK) }
+                    }
+                ),
                 _ => JsonSerializer.Serialize(string.Empty)
             };
 
