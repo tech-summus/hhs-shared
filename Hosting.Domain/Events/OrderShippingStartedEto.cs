@@ -1,6 +1,6 @@
 using HsnSoft.Base.Domain.Entities.Events;
 
-namespace Hosting.Events;
+namespace Hosting.Domain.Events;
 
 public record OrderShippingStartedEto(Guid OrderId): IIntegrationEventMessage
 {
