@@ -1,5 +1,4 @@
 using HsnSoft.Base.Domain.Entities.Events;
-using JetBrains.Annotations;
 
 namespace Hhs.Shared.Domain.Events;
 

@@ -14,10 +14,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hhs.Shared.Hosting.Gateways
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hhs.Shared.Hosting.Microservices", "src\Hhs.Shared.Hosting.Microservices\Hhs.Shared.Hosting.Microservices.csproj", "{372A4338-5562-4D79-AA8C-DA84554D6BCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hosting", "Hosting\Hosting.csproj", "{0D79876D-DD40-44C2-A3FA-B433B77B9F6F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hosting.Domain", "Hosting.Domain\Hosting.Domain.csproj", "{0584907F-5390-4E41-9202-2DBE4D96950D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,13 +47,5 @@ Global
 		{372A4338-5562-4D79-AA8C-DA84554D6BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{372A4338-5562-4D79-AA8C-DA84554D6BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{372A4338-5562-4D79-AA8C-DA84554D6BCE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D79876D-DD40-44C2-A3FA-B433B77B9F6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D79876D-DD40-44C2-A3FA-B433B77B9F6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D79876D-DD40-44C2-A3FA-B433B77B9F6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D79876D-DD40-44C2-A3FA-B433B77B9F6F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0584907F-5390-4E41-9202-2DBE4D96950D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0584907F-5390-4E41-9202-2DBE4D96950D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0584907F-5390-4E41-9202-2DBE4D96950D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0584907F-5390-4E41-9202-2DBE4D96950D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

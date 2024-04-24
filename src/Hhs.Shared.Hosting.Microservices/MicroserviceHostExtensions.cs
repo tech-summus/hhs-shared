@@ -9,7 +9,6 @@ using HsnSoft.Base.AspNetCore.Tracing;
 using HsnSoft.Base.EventBus;
 using HsnSoft.Base.EventBus.Logging;
 using HsnSoft.Base.EventBus.RabbitMQ;
-using HsnSoft.Base.MultiTenancy;
 using HsnSoft.Base.RabbitMQ;
 using HsnSoft.Base.Tracing;
 using Microsoft.AspNetCore.Builder;
