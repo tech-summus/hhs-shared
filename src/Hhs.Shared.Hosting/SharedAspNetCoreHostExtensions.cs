@@ -22,10 +22,8 @@ public static class SharedAspNetCoreHostExtensions
     {
         services.AddOptions();
 
-        services.AddTransient<IBaseLazyServiceProvider>(sp => new BaseLazyServiceProvider(sp));
-
         // Seeder functionality
-        services.AddTransient<ISeeder, DefaultSeeder>();
+        services.AddScoped<ISeeder, DefaultSeeder>();
         services.AddHostedService<SeederHostedService>();
 
         return services;
@@ -46,8 +44,8 @@ public static class SharedAspNetCoreHostExtensions
         services.AddEndpointsApiExplorer();
 
         services.AddHttpContextAccessor();
-        services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
-        services.AddTransient<IRazorRenderService, RazorRenderService>();
+        services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
+        services.AddScoped<IRazorRenderService, RazorRenderService>();
 
         return services;
     }
