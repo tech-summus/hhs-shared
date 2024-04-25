@@ -64,10 +64,10 @@ public static class MicroserviceHostExtensions
 
         services.AddSingleton<IRequestResponseLogger, RequestResponseLogger>();
         services.AddScoped<IRequestResponseLogModelCreator, RequestResponseLogModelCreator>();
-        services.AddTransient<RequestResponseLoggerMiddleware>();
+        services.AddScoped<RequestResponseLoggerMiddleware>();
 
         services.AddSingleton<IResponseExceptionHandler, ResponseExceptionHandler>();
-        services.AddTransient<GlobalExceptionHandlerMiddleware>();
+        services.AddScoped<GlobalExceptionHandlerMiddleware>();
 
         return services;
     }
