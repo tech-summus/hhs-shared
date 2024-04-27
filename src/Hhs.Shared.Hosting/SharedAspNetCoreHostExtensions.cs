@@ -3,7 +3,6 @@ using HsnSoft.Base.AspNetCore;
 using HsnSoft.Base.AspNetCore.Mvc.Services;
 using HsnSoft.Base.Auditing;
 using HsnSoft.Base.Data;
-using HsnSoft.Base.DependencyInjection;
 using HsnSoft.Base.MultiTenancy;
 using HsnSoft.Base.Security;
 using HsnSoft.Base.Timing;

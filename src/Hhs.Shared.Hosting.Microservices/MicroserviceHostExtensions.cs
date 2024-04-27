@@ -5,12 +5,15 @@ using Hhs.Shared.Hosting.Microservices.Handlers;
 using Hhs.Shared.Hosting.Microservices.Middlewares;
 using Hhs.Shared.Hosting.Microservices.Models;
 using HsnSoft.Base.Application.Dtos;
+using HsnSoft.Base.AspNetCore.Security.Claims;
 using HsnSoft.Base.AspNetCore.Tracing;
 using HsnSoft.Base.EventBus;
 using HsnSoft.Base.EventBus.Logging;
 using HsnSoft.Base.EventBus.RabbitMQ;
 using HsnSoft.Base.RabbitMQ;
+using HsnSoft.Base.Security.Claims;
 using HsnSoft.Base.Tracing;
+using HsnSoft.Base.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -89,7 +92,7 @@ public static class MicroserviceHostExtensions
             tags: new[] { "db" }
         );
 
-        var rabbitMq = new RabbitMQConnectionSettings();
+        var rabbitMq = new RabbitMqConnectionSettings();
         configuration.Bind("RabbitMQ:Connection", rabbitMq);
         hcBuilder.AddRabbitMQ
         (
@@ -104,7 +107,7 @@ public static class MicroserviceHostExtensions
 
     public static IServiceCollection AddMicroserviceEventBus(this IServiceCollection services, IConfiguration configuration, Assembly assembly)
     {
-        services.AddRabbitMQEventBus(configuration);
+        services.AddRabbitMqEventBus(configuration);
 
         // Add All Event Handlers
         services.AddEventHandlers(assembly);
@@ -112,18 +115,20 @@ public static class MicroserviceHostExtensions
         return services;
     }
 
-    private static void AddRabbitMQEventBus(this IServiceCollection services, IConfiguration configuration)
+    private static void AddRabbitMqEventBus(this IServiceCollection services, IConfiguration configuration)
     {
         // Add configuration objects
-        services.Configure<RabbitMQConnectionSettings>(configuration.GetSection("RabbitMQ:Connection"));
-        services.Configure<RabbitMQEventBusConfig>(configuration.GetSection("RabbitMQ:EventBus"));
+        services.Configure<RabbitMqConnectionSettings>(configuration.GetSection("RabbitMq:Connection"));
+        services.Configure<RabbitMqEventBusConfig>(configuration.GetSection("RabbitMq:EventBus"));
 
         // Add event bus instances
         services.AddHttpContextAccessor();
+        services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
+        services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddSingleton<ITraceAccesor, HttpContextTraceAccessor>();
         services.AddSingleton<IEventBusLogger, DefaultEventBusLogger>();
-        services.AddSingleton<IRabbitMQPersistentConnection>(sp => new RabbitMQPersistentConnection(sp));
-        services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp => new EventBusRabbitMQ(sp));
+        services.AddSingleton<IRabbitMqPersistentConnection, RabbitMqPersistentConnection>();
+        services.AddSingleton<IEventBus, EventBusRabbitMq>();
     }
 
     private static void AddEventHandlers(this IServiceCollection services, Assembly assembly)
