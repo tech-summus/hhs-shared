@@ -10,7 +10,7 @@ COPY ["./common.props", "./"]
 COPY ["./common.version.props", "./"]
 COPY ["./Hhs.Shared.sln", "./"]
 
-COPY ["./src/Hhs.Shared.Domain/Hhs.Shared.Domain.csproj", "./src/Hhs.Shared.Domain/"]
+COPY ["./src/Hhs.Shared.Contracts/Hhs.Shared.Contracts.csproj", "./src/Hhs.Shared.Contracts/"]
 COPY ["./src/Hhs.Shared.Helper/Hhs.Shared.Helper.csproj", "./src/Hhs.Shared.Helper/"]
 COPY ["./src/Hhs.Shared.Hosting/Hhs.Shared.Hosting.csproj", "./src/Hhs.Shared.Hosting/"]
 COPY ["./src/Hhs.Shared.Hosting.Gateways/Hhs.Shared.Hosting.Gateways.csproj", "./src/Hhs.Shared.Hosting.Gateways/"]
@@ -18,7 +18,7 @@ COPY ["./src/Hhs.Shared.Hosting.Microservices/Hhs.Shared.Hosting.Microservices.c
 
 RUN dotnet restore "./Hhs.Shared.sln" --verbosity minimal
 
-COPY ["./src/Hhs.Shared.Domain/.", "./src/Hhs.Shared.Domain/"]
+COPY ["./src/Hhs.Shared.Contracts/.", "./src/Hhs.Shared.Contracts/"]
 COPY ["./src/Hhs.Shared.Helper/.", "./src/Hhs.Shared.Helper/"]
 COPY ["./src/Hhs.Shared.Hosting/.", "./src/Hhs.Shared.Hosting/"]
 COPY ["./src/Hhs.Shared.Hosting.Gateways/.", "./src/Hhs.Shared.Hosting.Gateways/"]
