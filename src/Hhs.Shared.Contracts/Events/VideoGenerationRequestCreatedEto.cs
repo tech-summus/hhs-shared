@@ -1,6 +1,6 @@
 using HsnSoft.Base.Domain.Entities.Events;
 
-namespace Hhs.Shared.Domain.Events;
+namespace Hhs.Shared.Contracts.Events;
 
 public sealed record VideoGenerationRequestCreatedEto(Guid ReferenceContentId, Guid VideoRequestId) : IIntegrationEventMessage
 {

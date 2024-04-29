@@ -21,13 +21,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(MicrosoftAspNetCorePackageVersion)" />
-        <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
         <PackageReference Include="prometheus-net.AspNetCore" Version="8.1.0" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="HsnSoft.Base.Autofac" Version="$(HsnSoftFrameworkVersion)" />
+        <PackageReference Include="HsnSoft.Base.AspNetCore.Authentication.JwtBearer" Version="$(HsnSoftFrameworkVersion)" />
         <PackageReference Include="HsnSoft.Base.AspNetCore.Serilog" Version="$(HsnSoftFrameworkVersion)" />
         <PackageReference Include="HsnSoft.Base.Swashbuckle" Version="$(HsnSoftFrameworkVersion)" />
         <PackageReference Include="HsnSoft.Base.Data" Version="$(HsnSoftFrameworkVersion)" />

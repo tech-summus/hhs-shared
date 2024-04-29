@@ -1,7 +1,7 @@
 using HsnSoft.Base.Domain.Entities.Events;
 using JetBrains.Annotations;
 
-namespace Hhs.Shared.Domain.Events;
+namespace Hhs.Shared.Contracts.Events;
 
 public sealed record ContentNormalizedResultEto(Guid ContentId, bool IsNormalizedSuccess, Guid NormalizedRequestId, [CanBeNull] string NormalizedResult) : IIntegrationEventMessage
 {
