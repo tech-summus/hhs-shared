@@ -4,7 +4,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2561A2F4-B87
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8B8391D1-3711-4CDA-8286-5154FD57CAB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hhs.Shared.Domain", "src\Hhs.Shared.Domain\Hhs.Shared.Domain.csproj", "{7DBE785A-B707-4D7E-A1BE-1A2AF01AA1A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hhs.Shared.Contracts", "src\Hhs.Shared.Contracts\Hhs.Shared.Contracts.csproj", "{7DBE785A-B707-4D7E-A1BE-1A2AF01AA1A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hhs.Shared.Helper", "src\Hhs.Shared.Helper\Hhs.Shared.Helper.csproj", "{97934917-7FC2-4286-9A50-51AAE653E0C0}"
 EndProject

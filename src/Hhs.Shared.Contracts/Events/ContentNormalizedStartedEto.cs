@@ -1,7 +1,7 @@
 using HsnSoft.Base.Domain.Entities.Events;
 using JetBrains.Annotations;
 
-namespace Hhs.Shared.Domain.Events;
+namespace Hhs.Shared.Contracts.Events;
 
 public sealed record ContentNormalizedStartedEto(Guid ClientId, Guid ContentId, [NotNull] string EncodedContentData) : IIntegrationEventMessage
 {
