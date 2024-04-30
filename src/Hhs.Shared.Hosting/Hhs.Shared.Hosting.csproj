@@ -17,15 +17,15 @@
         <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
         <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="prometheus-net.AspNetCore" Version="8.1.0" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="HsnSoft.Base.Autofac" Version="$(HsnSoftFrameworkVersion)" />
         <PackageReference Include="HsnSoft.Base.AspNetCore.Authentication.JwtBearer" Version="$(HsnSoftFrameworkVersion)" />
         <PackageReference Include="HsnSoft.Base.AspNetCore.Serilog" Version="$(HsnSoftFrameworkVersion)" />
         <PackageReference Include="HsnSoft.Base.Swashbuckle" Version="$(HsnSoftFrameworkVersion)" />
