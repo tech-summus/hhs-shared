@@ -16,6 +16,8 @@
     <ItemGroup>
         <PackageReference Include="HsnSoft.Base.Ddd.Application.Contracts" Version="$(HsnSoftFrameworkVersion)" />
         <PackageReference Include="HsnSoft.Base.EventBus.Abstractions" Version="$(HsnSoftFrameworkVersion)" />
+        <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.Ddd.Application.Contracts\HsnSoft.Base.Ddd.Application.Contracts.csproj" />-->
+        <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.EventBus.Abstractions\HsnSoft.Base.EventBus.Abstractions.csproj" />-->
     </ItemGroup>
 
 </Project>
