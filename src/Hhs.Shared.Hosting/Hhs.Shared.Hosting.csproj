@@ -35,5 +35,5 @@
         <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.Swashbuckle\HsnSoft.Base.Swashbuckle.csproj"/>-->
         <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.Data\HsnSoft.Base.Data.csproj"/>-->
     </ItemGroup>
-    
+
 </Project>
