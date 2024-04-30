@@ -16,6 +16,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="$(MicrosoftPackageVersion)" />
         <PackageReference Include="HsnSoft.Base.Validation" Version="$(HsnSoftFrameworkVersion)" />
+        <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.Validation\HsnSoft.Base.Validation.csproj" />-->
     </ItemGroup>
 
 </Project>
