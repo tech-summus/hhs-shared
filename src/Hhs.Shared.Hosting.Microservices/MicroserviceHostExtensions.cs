@@ -35,7 +35,6 @@ public static class MicroserviceHostExtensions
         SearchLimitedResultRequestDto.MaxMaxResultCount = 20;
 
         services.ConfigureSharedAspNetCoreHost();
-        services.AddControllers();
 
         return services;
     }

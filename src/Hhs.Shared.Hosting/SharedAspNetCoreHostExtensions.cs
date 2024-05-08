@@ -43,6 +43,8 @@ public static class SharedAspNetCoreHostExtensions
         services.AddBaseMultiTenancyServiceCollection();
         services.AddBaseTimingServiceCollection();
 
+        services.AddControllers();
+
         return services;
     }
 
