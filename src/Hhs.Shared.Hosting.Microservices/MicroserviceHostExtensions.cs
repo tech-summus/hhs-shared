@@ -35,11 +35,12 @@ public static class MicroserviceHostExtensions
         SearchLimitedResultRequestDto.MaxMaxResultCount = 20;
 
         services.ConfigureSharedAspNetCoreHost();
+        services.AddControllers();
 
         return services;
     }
 
-    public static IServiceCollection AddMicroserviceMvc(this IServiceCollection services, IConfiguration configuration, Type type)
+    public static IServiceCollection AddAdvancedController(this IServiceCollection services, IConfiguration configuration, Type type)
     {
         // Add our Config object so it can be injected
         services.Configure<MicroserviceSettings>(configuration.GetSection("MicroserviceSettings"));
