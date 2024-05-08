@@ -25,12 +25,6 @@ public static class GatewayHostRegistration
             // ocelotBuilder.AddDelegatingHandler<BaseRemoveCsrfCookieHandler>(true);
         }
 
-        services.AddOptions();
-        services.AddEndpointsApiExplorer();
-
-        services.AddHttpContextAccessor();
-        services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
-
         return services;
     }
 }

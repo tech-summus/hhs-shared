@@ -17,33 +17,39 @@ namespace Hhs.Shared.Hosting;
 
 public static class SharedAspNetCoreHostExtensions
 {
+    // All hostings
     public static IServiceCollection ConfigureSharedHost(this IServiceCollection services)
     {
-        services.AddOptions();
-
         // Seeder functionality
         services.AddScoped<ISeeder, DefaultSeeder>();
         services.AddHostedService<SeederHostedService>();
 
-        return services;
-    }
-
-    public static IServiceCollection ConfigureSharedAspNetCoreHost(this IServiceCollection services)
-    {
-        services.ConfigureSharedHost();
-
-        services.AddBaseMultiTenancyServiceCollection();
-        services.AddBaseSecurityServiceCollection();
-        services.AddBaseTimingServiceCollection();
-        services.AddBaseAuditingServiceCollection();
-        services.AddBaseDataServiceCollection();
-        services.AddBaseAspNetCoreServiceCollection();
-        services.AddBaseAspNetCoreJsonLocalization();
-
+        services.AddOptions();
         services.AddEndpointsApiExplorer();
 
         services.AddHttpContextAccessor();
         services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
+
+        return services;
+    }
+
+    // Microservices and Mvc Apps Base
+    public static IServiceCollection ConfigureSharedAspNetCoreHost(this IServiceCollection services)
+    {
+        services.ConfigureSharedHost();
+
+        services.AddBaseAspNetCoreContextCollection();
+        services.AddBaseAspNetCoreJsonLocalization();
+        services.AddBaseMultiTenancyServiceCollection();
+        services.AddBaseTimingServiceCollection();
+
+        services.AddControllers();
+
+        return services;
+    }
+
+    public static IServiceCollection AddMvcRazorRender(this IServiceCollection services)
+    {
         services.AddScoped<IRazorRenderService, RazorRenderService>();
 
         return services;
