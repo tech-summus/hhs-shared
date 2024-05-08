@@ -1,14 +1,15 @@
 using System.Reflection;
+using HsnSoft.Base.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace Hhs.Shared.Hosting.Workers;
+namespace Hhs.Shared.Hosting.Microservices.Workers;
 
 public class SeederHostedService : IHostedService
 {
     private static readonly ILogger Logger = Log.ForContext(MethodBase.GetCurrentMethod()?.DeclaringType!);
-  
+
     private readonly IServiceScopeFactory _scopeFactory;
 
     public SeederHostedService(IServiceScopeFactory scopeFactory)
@@ -44,7 +45,7 @@ public class SeederHostedService : IHostedService
     private async Task LoadConfiguration(CancellationToken cancellationToken)
     {
         using var scope = _scopeFactory.CreateScope();
-        var seeder = scope.ServiceProvider.GetRequiredService<ISeeder>();
-        await seeder.EnsureSeedDataAsync(scope.ServiceProvider);
+        var seeder = scope.ServiceProvider.GetRequiredService<IBasicDataSeeder>();
+        await seeder.EnsureSeedDataAsync(cancellationToken);
     }
 }

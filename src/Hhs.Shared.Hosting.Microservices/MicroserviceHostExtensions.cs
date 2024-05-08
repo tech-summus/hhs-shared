@@ -5,9 +5,11 @@ using Hhs.Shared.Hosting.Microservices.Filters;
 using Hhs.Shared.Hosting.Microservices.Handlers;
 using Hhs.Shared.Hosting.Microservices.Middlewares;
 using Hhs.Shared.Hosting.Microservices.Models;
+using Hhs.Shared.Hosting.Microservices.Workers;
 using HsnSoft.Base.Application.Dtos;
 using HsnSoft.Base.AspNetCore.Security.Claims;
 using HsnSoft.Base.AspNetCore.Tracing;
+using HsnSoft.Base.Data;
 using HsnSoft.Base.EventBus;
 using HsnSoft.Base.EventBus.Kafka;
 using HsnSoft.Base.EventBus.Logging;
@@ -35,6 +37,10 @@ public static class MicroserviceHostExtensions
         SearchLimitedResultRequestDto.MaxMaxResultCount = 20;
 
         services.ConfigureSharedAspNetCoreHost();
+
+        // Seeder functionality
+        services.AddTransient<IBasicDataSeeder, DefaultBasicDataSeeder>();
+        services.AddHostedService<SeederHostedService>();
 
         return services;
     }
