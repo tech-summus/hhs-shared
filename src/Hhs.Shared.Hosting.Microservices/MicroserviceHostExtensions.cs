@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Confluent.Kafka;
 using Hhs.Shared.Hosting.Microservices.Filters;
 using Hhs.Shared.Hosting.Microservices.Handlers;
 using Hhs.Shared.Hosting.Microservices.Middlewares;
@@ -11,9 +10,9 @@ using HsnSoft.Base.AspNetCore.Security.Claims;
 using HsnSoft.Base.AspNetCore.Tracing;
 using HsnSoft.Base.Data;
 using HsnSoft.Base.EventBus;
-using HsnSoft.Base.EventBus.Kafka;
 using HsnSoft.Base.EventBus.Logging;
-using HsnSoft.Base.Kafka;
+using HsnSoft.Base.EventBus.RabbitMQ;
+using HsnSoft.Base.RabbitMQ;
 using HsnSoft.Base.Security.Claims;
 using HsnSoft.Base.Tracing;
 using HsnSoft.Base.Users;
@@ -82,22 +81,22 @@ public static class MicroserviceHostExtensions
         return services;
     }
 
-    public static IServiceCollection AddMicroserviceHealthChecks(this IServiceCollection services, IConfiguration configuration, string connectionStringKey)
+    public static IServiceCollection AddMicroserviceHealthChecks(this IServiceCollection services, IConfiguration configuration)
     {
         var hcBuilder = services.AddHealthChecks();
 
-        var healtCheckPrefix = connectionStringKey ?? string.Empty;
-        healtCheckPrefix = healtCheckPrefix.ToLower().Replace("service", "");
+        // var healtCheckPrefix = connectionStringKey ?? string.Empty;
+        // healtCheckPrefix = healtCheckPrefix.ToLower().Replace("service", "");
 
         hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
 
-        hcBuilder.AddNpgSql
-        (
-            configuration.GetConnectionString(connectionStringKey) ?? throw new InvalidOperationException(),
-            healthQuery: "SELECT 1;",
-            name: $"{healtCheckPrefix}-db-check",
-            tags: new[] { "db" }
-        );
+        // hcBuilder.AddNpgSql
+        // (
+        //     configuration.GetConnectionString(connectionStringKey) ?? throw new InvalidOperationException(),
+        //     healthQuery: "SELECT 1;",
+        //     name: $"{healtCheckPrefix}-db-check",
+        //     tags: new[] { "db" }
+        // );
 
         // var rabbitMq = new RabbitMqConnectionSettings();
         // configuration.Bind("RabbitMQ:Connection", rabbitMq);
@@ -109,21 +108,21 @@ public static class MicroserviceHostExtensions
         //     tags: new[] { "rabbitmq" }
         // );
 
-        var kafka = new KafkaConnectionSettings();
-        configuration.Bind("Kafka:Connection", kafka);
-        hcBuilder.AddKafka(
-            new ProducerConfig { BootstrapServers = $"{kafka.HostName}:{kafka.Port}" },
-            name: $"{healtCheckPrefix}-kafka-check",
-            tags: new[] { "kafka" }
-        );
+        // var kafka = new KafkaConnectionSettings();
+        // configuration.Bind("Kafka:Connection", kafka);
+        // hcBuilder.AddKafka(
+        //     new ProducerConfig { BootstrapServers = $"{kafka.HostName}:{kafka.Port}" },
+        //     name: $"{healtCheckPrefix}-kafka-check",
+        //     tags: new[] { "kafka" }
+        // );
 
         return services;
     }
 
     public static IServiceCollection AddMicroserviceEventBus(this IServiceCollection services, IConfiguration configuration, Assembly assembly)
     {
-        services.AddKafkaEventBus(configuration);
-        // services.AddRabbitMqEventBus(configuration);
+       //  services.AddKafkaEventBus(configuration);
+        services.AddRabbitMqEventBus(configuration);
 
         // Add All Event Handlers
         services.AddEventHandlers(assembly);
@@ -131,26 +130,11 @@ public static class MicroserviceHostExtensions
         return services;
     }
 
-    private static void AddKafkaEventBus(this IServiceCollection services, IConfiguration configuration)
-    {
-        // Add configuration objects
-        services.Configure<KafkaConnectionSettings>(configuration.GetSection("Kafka:Connection"));
-        services.Configure<KafkaEventBusConfig>(configuration.GetSection("Kafka:EventBus"));
-
-        // Add event bus instances
-        services.AddHttpContextAccessor();
-        services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
-        services.AddScoped<ICurrentUser, CurrentUser>();
-        services.AddSingleton<ITraceAccesor, HttpContextTraceAccessor>();
-        services.AddSingleton<IEventBusLogger, DefaultEventBusLogger>();
-        services.AddSingleton<IEventBus, EventBusKafka>(sp => new EventBusKafka(sp));
-    }
-
-    // private static void AddRabbitMqEventBus(this IServiceCollection services, IConfiguration configuration)
+    // private static void AddKafkaEventBus(this IServiceCollection services, IConfiguration configuration)
     // {
     //     // Add configuration objects
-    //     services.Configure<RabbitMqConnectionSettings>(configuration.GetSection("RabbitMq:Connection"));
-    //     services.Configure<RabbitMqEventBusConfig>(configuration.GetSection("RabbitMq:EventBus"));
+    //     services.Configure<KafkaConnectionSettings>(configuration.GetSection("Kafka:Connection"));
+    //     services.Configure<KafkaEventBusConfig>(configuration.GetSection("Kafka:EventBus"));
     //
     //     // Add event bus instances
     //     services.AddHttpContextAccessor();
@@ -158,9 +142,24 @@ public static class MicroserviceHostExtensions
     //     services.AddScoped<ICurrentUser, CurrentUser>();
     //     services.AddSingleton<ITraceAccesor, HttpContextTraceAccessor>();
     //     services.AddSingleton<IEventBusLogger, DefaultEventBusLogger>();
-    //     services.AddSingleton<IRabbitMqPersistentConnection, RabbitMqPersistentConnection>();
-    //     services.AddSingleton<IEventBus, EventBusRabbitMq>();
+    //     services.AddSingleton<IEventBus, EventBusKafka>(sp => new EventBusKafka(sp));
     // }
+
+    private static void AddRabbitMqEventBus(this IServiceCollection services, IConfiguration configuration)
+    {
+        // Add configuration objects
+        services.Configure<RabbitMqConnectionSettings>(configuration.GetSection("RabbitMq:Connection"));
+        services.Configure<RabbitMqEventBusConfig>(configuration.GetSection("RabbitMq:EventBus"));
+
+        // Add event bus instances
+        services.AddHttpContextAccessor();
+        services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
+        services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddSingleton<ITraceAccesor, HttpContextTraceAccessor>();
+        services.AddSingleton<IEventBusLogger, DefaultEventBusLogger>();
+        services.AddSingleton<IRabbitMqPersistentConnection, RabbitMqPersistentConnection>();
+        services.AddSingleton<IEventBus, EventBusRabbitMq>();
+    }
 
     private static void AddEventHandlers(this IServiceCollection services, Assembly assembly)
     {
