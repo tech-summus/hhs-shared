@@ -1,7 +1,7 @@
 # hhs-shared
 
-serdar test
+### to sync remote branches with local
+`git fetch --prune`
 
-commit 2
-
-commit 3
+### merge remote changes into local branch without extra commit
+`git merge remotes/origin/dev --no-commit`
