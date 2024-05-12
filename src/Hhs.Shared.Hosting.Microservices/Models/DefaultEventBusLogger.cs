@@ -1,10 +1,11 @@
 using HsnSoft.Base.EventBus.Logging;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Newtonsoft.Json;
 
 namespace Hhs.Shared.Hosting.Microservices.Models;
 
-public class DefaultEventBusLogger : IEventBusLogger
+public class DefaultEventBusLogger<T> : IEventBusLogger<T>
 {
     private readonly ILogger _logger;
 
@@ -21,21 +22,22 @@ public class DefaultEventBusLogger : IEventBusLogger
                 options.IncludeScopes = true;
                 options.SingleLine = true;
                 options.TimestampFormat = "hh:mm:ss ";
+                options.ColorBehavior = LoggerColorBehavior.Default;
             });
         });
 
-        _logger = loggerFactory.CreateLogger("EventBusLogger");
+        _logger = loggerFactory.CreateLogger(typeof(T).Name);
     }
 
-    public void LogDebug(string messageTemplate, params object[] args) => _logger.LogDebug(messageTemplate, args);
+    public void LogDebug(string? messageTemplate, params object[] args) => _logger.LogDebug(messageTemplate, args);
 
-    public void LogError(string messageTemplate, params object[] args) => _logger.LogError(messageTemplate, args);
+    public void LogError(string? messageTemplate, params object[] args) => _logger.LogError(messageTemplate, args);
 
-    public void LogWarning(string messageTemplate, params object[] args) => _logger.LogWarning(messageTemplate, args);
+    public void LogWarning(string? messageTemplate, params object[] args) => _logger.LogWarning(messageTemplate, args);
 
-    public void LogInformation(string messageTemplate, params object[] args) => _logger.LogInformation(messageTemplate, args);
+    public void LogInformation(string? messageTemplate, params object[] args) => _logger.LogInformation(messageTemplate, args);
 
-    public void EventBusInfoLog<T>(T t) where T : IEventBusLog => _logger.Log(LogLevel.Trace, JsonConvert.SerializeObject(t));
+    public void EventBusInfoLog<T>(T? t) where T : IEventBusLog => _logger.Log(LogLevel.Trace, JsonConvert.SerializeObject(t));
 
-    public void EventBusErrorLog<T>(T t) where T : IEventBusLog => _logger.Log(LogLevel.Critical, JsonConvert.SerializeObject(t));
+    public void EventBusErrorLog<T>(T? t) where T : IEventBusLog => _logger.Log(LogLevel.Critical, JsonConvert.SerializeObject(t));
 }

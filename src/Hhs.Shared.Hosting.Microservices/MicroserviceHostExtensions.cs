@@ -12,7 +12,8 @@ using HsnSoft.Base.Data;
 using HsnSoft.Base.EventBus;
 using HsnSoft.Base.EventBus.Logging;
 using HsnSoft.Base.EventBus.RabbitMQ;
-using HsnSoft.Base.RabbitMQ;
+using HsnSoft.Base.EventBus.RabbitMQ.Configs;
+using HsnSoft.Base.EventBus.RabbitMQ.Connection;
 using HsnSoft.Base.Security.Claims;
 using HsnSoft.Base.Tracing;
 using HsnSoft.Base.Users;
@@ -121,7 +122,7 @@ public static class MicroserviceHostExtensions
 
     public static IServiceCollection AddMicroserviceEventBus(this IServiceCollection services, IConfiguration configuration, Assembly assembly)
     {
-       //  services.AddKafkaEventBus(configuration);
+        //  services.AddKafkaEventBus(configuration);
         services.AddRabbitMqEventBus(configuration);
 
         // Add All Event Handlers
@@ -141,7 +142,7 @@ public static class MicroserviceHostExtensions
     //     services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
     //     services.AddScoped<ICurrentUser, CurrentUser>();
     //     services.AddSingleton<ITraceAccesor, HttpContextTraceAccessor>();
-    //     services.AddSingleton<IEventBusLogger, DefaultEventBusLogger>();
+    //     services.AddSingleton(typeof(IEventBusLogger<>), typeof(DefaultEventBusLogger<>));
     //     services.AddSingleton<IEventBus, EventBusKafka>(sp => new EventBusKafka(sp));
     // }
 
@@ -156,7 +157,7 @@ public static class MicroserviceHostExtensions
         services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddSingleton<ITraceAccesor, HttpContextTraceAccessor>();
-        services.AddSingleton<IEventBusLogger, DefaultEventBusLogger>();
+        services.AddSingleton(typeof(IEventBusLogger<>), typeof(DefaultEventBusLogger<>));
         services.AddSingleton<IRabbitMqPersistentConnection, RabbitMqPersistentConnection>();
         services.AddSingleton<IEventBus, EventBusRabbitMq>();
     }
