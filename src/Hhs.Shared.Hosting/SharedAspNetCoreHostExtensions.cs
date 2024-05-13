@@ -1,5 +1,7 @@
 using HsnSoft.Base.AspNetCore;
 using HsnSoft.Base.AspNetCore.Mvc.Services;
+using HsnSoft.Base.AspNetCore.Serilog;
+using HsnSoft.Base.Logging;
 using HsnSoft.Base.MultiTenancy;
 using HsnSoft.Base.Timing;
 using Microsoft.AspNetCore.Builder;
@@ -21,6 +23,9 @@ public static class SharedAspNetCoreHostExtensions
 
         services.AddHttpContextAccessor();
         services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
+
+        services.AddSingleton<IBaseLogger, SerilogPersistentLogger<HhsLogModel>>();
+        services.AddSingleton<IPersistentLogger<HhsLogModel>, SerilogPersistentLogger<HhsLogModel>>();
 
         return services;
     }
