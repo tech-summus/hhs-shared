@@ -7,7 +7,7 @@ using Hhs.Shared.Hosting.Microservices.Models;
 using Hhs.Shared.Hosting.Microservices.Workers;
 using HsnSoft.Base.Application.Dtos;
 using HsnSoft.Base.AspNetCore.Security.Claims;
-using HsnSoft.Base.AspNetCore.Serilog;
+using HsnSoft.Base.AspNetCore.Serilog.Persistent;
 using HsnSoft.Base.AspNetCore.Tracing;
 using HsnSoft.Base.Data;
 using HsnSoft.Base.EventBus;
@@ -15,6 +15,7 @@ using HsnSoft.Base.EventBus.Logging;
 using HsnSoft.Base.EventBus.RabbitMQ;
 using HsnSoft.Base.EventBus.RabbitMQ.Configs;
 using HsnSoft.Base.EventBus.RabbitMQ.Connection;
+using HsnSoft.Base.EventBus.SubManagers;
 using HsnSoft.Base.Security.Claims;
 using HsnSoft.Base.Tracing;
 using HsnSoft.Base.Users;
@@ -158,9 +159,10 @@ public static class MicroserviceHostExtensions
         services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddSingleton<ITraceAccesor, HttpContextTraceAccessor>();
-        services.AddSingleton<IEventBusLogger, SerilogEventBusLogger>();
+        services.AddSingleton<IEventBusLogger, EventBusLogger>();
         services.AddSingleton<IRabbitMqPersistentConnection, RabbitMqPersistentConnection>();
-        services.AddSingleton<IEventBus, EventBusRabbitMq>();
+        services.AddSingleton<IEventBusSubscriptionManager, InMemoryEventBusSubscriptionManager>();
+        services.AddSingleton<IEventBus, EventBusRabbitMq>(sp => new EventBusRabbitMq(sp));
     }
 
     private static void AddEventHandlers(this IServiceCollection services, Assembly assembly)

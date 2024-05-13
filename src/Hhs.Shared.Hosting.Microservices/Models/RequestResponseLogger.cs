@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+using HsnSoft.Base.Logging;
 
 namespace Hhs.Shared.Hosting.Microservices.Models;
 
@@ -9,15 +9,15 @@ public interface IRequestResponseLogger
 
 public sealed class RequestResponseLogger : IRequestResponseLogger
 {
-    private readonly ILogger<RequestResponseLogger> _logger;
+    private readonly IBaseLogger _logger;
 
-    public RequestResponseLogger(ILogger<RequestResponseLogger> logger)
+    public RequestResponseLogger(IBaseLogger logger)
     {
         _logger = logger;
     }
 
     public void Log(IRequestResponseLogModelCreator logCreator)
     {
-        _logger.LogTrace(logCreator.LogString());
+        _logger.LogInformation(logCreator.LogString());
     }
 }
