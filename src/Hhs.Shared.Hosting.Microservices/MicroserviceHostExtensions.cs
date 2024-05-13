@@ -143,7 +143,7 @@ public static class MicroserviceHostExtensions
     //     services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
     //     services.AddScoped<ICurrentUser, CurrentUser>();
     //     services.AddSingleton<ITraceAccesor, HttpContextTraceAccessor>();
-    //     services.AddSingleton(typeof(IEventBusLogger<>), typeof(SerilogPersistentLogger<>));
+    //     services.AddSingleton<IEventBusLogger, SerilogEventBusLogger>();
     //     services.AddSingleton<IEventBus, EventBusKafka>(sp => new EventBusKafka(sp));
     // }
 
@@ -158,7 +158,7 @@ public static class MicroserviceHostExtensions
         services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddSingleton<ITraceAccesor, HttpContextTraceAccessor>();
-        services.AddSingleton(typeof(IEventBusLogger<>), typeof(SerilogPersistentLogger<>));
+        services.AddSingleton<IEventBusLogger, SerilogEventBusLogger>();
         services.AddSingleton<IRabbitMqPersistentConnection, RabbitMqPersistentConnection>();
         services.AddSingleton<IEventBus, EventBusRabbitMq>();
     }

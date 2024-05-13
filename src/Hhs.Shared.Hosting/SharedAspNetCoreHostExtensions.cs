@@ -24,8 +24,8 @@ public static class SharedAspNetCoreHostExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
 
-        services.AddSingleton<IBaseLogger, SerilogPersistentLogger<HhsLogModel>>();
-        services.AddSingleton<IPersistentLogger<HhsLogModel>, SerilogPersistentLogger<HhsLogModel>>();
+        services.AddSingleton<IBaseLogger, SerilogBaseLogger>();
+        services.AddSingleton<IPersistentLogger, SerilogPersistentLogger>();
 
         return services;
     }
