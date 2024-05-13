@@ -2,12 +2,12 @@ using System.Net;
 using System.Text.Json;
 using Hhs.Shared.Hosting.Microservices.Handlers;
 using HsnSoft.Base.Communication;
+using HsnSoft.Base.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Hhs.Shared.Hosting.Microservices.Filters;
@@ -15,12 +15,12 @@ namespace Hhs.Shared.Hosting.Microservices.Filters;
 [AttributeUsage(validOn: AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFilter
 {
-    private readonly ILogger<RequestResponseActionFilterAttribute> _logger;
+    private readonly IBaseLogger _logger;
     private readonly IResponseExceptionHandler _handler;
     private readonly IWebHostEnvironment _env;
     private readonly MicroserviceSettings _settings;
 
-    public RequestResponseActionFilterAttribute(ILogger<RequestResponseActionFilterAttribute> logger,
+    public RequestResponseActionFilterAttribute(IBaseLogger logger,
         IResponseExceptionHandler handler,
         IWebHostEnvironment env,
         IOptions<MicroserviceSettings> settings,

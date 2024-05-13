@@ -1,44 +1,44 @@
-using System.Reflection;
 using HsnSoft.Base.Data;
+using HsnSoft.Base.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog;
 
 namespace Hhs.Shared.Hosting.Microservices.Workers;
 
 public class SeederHostedService : IHostedService
 {
-    private static readonly ILogger Logger = Log.ForContext(MethodBase.GetCurrentMethod()?.DeclaringType!);
+    private readonly IBaseLogger _logger;
 
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public SeederHostedService(IServiceScopeFactory scopeFactory)
+    public SeederHostedService(IServiceScopeFactory scopeFactory, IBaseLogger logger)
     {
         _scopeFactory = scopeFactory;
+        _logger = logger;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        Logger.Information("SeederHostedService started");
+        _logger.LogInformation("SeederHostedService started");
 
         while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
                 await LoadConfiguration(cancellationToken);
-                Logger.Information($"SeederHostedService successfully completed - {DateTime.UtcNow:yyyyMMdd hh:mm:ss}");
+                _logger.LogInformation($"SeederHostedService successfully completed - {DateTime.UtcNow:yyyyMMdd hh:mm:ss}");
                 break;
             }
             catch (OperationCanceledException) { }
 
-            Logger.Error($"SeederHostedService Failed - {DateTime.UtcNow:yyyyMMdd hh:mm:ss}");
+            _logger.LogError($"SeederHostedService Failed - {DateTime.UtcNow:yyyyMMdd hh:mm:ss}");
             break;
         }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        Logger.Information("SeederHostedService stopped");
+        _logger.LogInformation("SeederHostedService stopped");
         return Task.CompletedTask;
     }
 
