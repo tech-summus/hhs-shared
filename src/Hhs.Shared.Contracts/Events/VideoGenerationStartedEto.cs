@@ -3,11 +3,11 @@ using JetBrains.Annotations;
 
 namespace Hhs.Shared.Contracts.Events;
 
-public sealed record VideoGenerationStartedEto(Guid ClientId, Guid ContentId, [NotNull] string NormalizedContentData) : IIntegrationEventMessage
+public sealed record VideoGenerationStartedEto(Guid ClientId, Guid ContentId, [NotNull] string EncodedNormalizedContentData) : IIntegrationEventMessage
 {
     public Guid ClientId { get; } = ClientId;
     public Guid ContentId { get; } = ContentId;
 
     [NotNull]
-    public string NormalizedContentData { get; } = NormalizedContentData;
+    public string EncodedNormalizedContentData { get; } = EncodedNormalizedContentData;
 }

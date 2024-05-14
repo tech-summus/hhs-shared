@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace Hhs.Shared.Contracts.Events;
 
-public sealed record ContentNormalizedResultEto(Guid ContentId, bool IsNormalizedSuccess, Guid NormalizedRequestId, [CanBeNull] string NormalizedResult) : IIntegrationEventMessage
+public sealed record ContentNormalizedResultEto(Guid ContentId, bool IsNormalizedSuccess, Guid NormalizedRequestId, [CanBeNull] string EncodedNormalizedResult) : IIntegrationEventMessage
 {
     public Guid ContentId { get; } = ContentId;
     public bool IsNormalizedSuccess { get; } = IsNormalizedSuccess;
@@ -11,5 +11,5 @@ public sealed record ContentNormalizedResultEto(Guid ContentId, bool IsNormalize
     public Guid NormalizedRequestId { get; } = NormalizedRequestId;
 
     [CanBeNull]
-    public string NormalizedResult { get; } = NormalizedResult;
+    public string EncodedNormalizedResult { get; } = EncodedNormalizedResult;
 }
