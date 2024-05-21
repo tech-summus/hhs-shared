@@ -42,7 +42,7 @@ public static class MicroserviceHostExtensions
 
         // Seeder functionality
         services.AddTransient<IBasicDataSeeder, DefaultBasicDataSeeder>();
-        services.AddHostedService<SeederHostedService>();
+        services.AddHostedService<DataSeederHostedService>();
 
         return services;
     }

@@ -5,13 +5,13 @@ using Microsoft.Extensions.Hosting;
 
 namespace Hhs.Shared.Hosting.Microservices.Workers;
 
-public class SeederHostedService : IHostedService
+public class DataSeederHostedService : IHostedService
 {
     private readonly IBaseLogger _logger;
 
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public SeederHostedService(IServiceScopeFactory scopeFactory, IBaseLogger logger)
+    public DataSeederHostedService(IServiceScopeFactory scopeFactory, IBaseLogger logger)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
@@ -19,30 +19,30 @@ public class SeederHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("SeederHostedService started");
+        _logger.LogInformation("DataSeederHostedService | Started");
 
         while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
-                await LoadConfiguration(cancellationToken);
-                _logger.LogInformation($"SeederHostedService successfully completed - {DateTime.UtcNow:yyyyMMdd hh:mm:ss}");
+                await SeedOperation(cancellationToken);
+                _logger.LogInformation($"DataSeederHostedService | Successfully completed - {DateTime.UtcNow:yyyyMMdd hh:mm:ss}");
                 break;
             }
             catch (OperationCanceledException) { }
 
-            _logger.LogError($"SeederHostedService Failed - {DateTime.UtcNow:yyyyMMdd hh:mm:ss}");
+            _logger.LogError($"DataSeederHostedService | Failed - {DateTime.UtcNow:yyyyMMdd hh:mm:ss}");
             break;
         }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("SeederHostedService stopped");
+        _logger.LogInformation("DataSeederHostedService | Stopped");
         return Task.CompletedTask;
     }
 
-    private async Task LoadConfiguration(CancellationToken cancellationToken)
+    private async Task SeedOperation(CancellationToken cancellationToken)
     {
         using var scope = _scopeFactory.CreateScope();
         var seeder = scope.ServiceProvider.GetRequiredService<IBasicDataSeeder>();
