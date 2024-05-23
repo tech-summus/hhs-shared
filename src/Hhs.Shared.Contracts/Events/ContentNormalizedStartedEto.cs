@@ -3,11 +3,17 @@ using JetBrains.Annotations;
 
 namespace Hhs.Shared.Contracts.Events;
 
-public sealed record ContentNormalizedStartedEto(Guid ClientId, Guid ContentId, [NotNull] string EncodedContentData) : IIntegrationEventMessage
+public sealed record ContentNormalizedStartedEto(Guid TenantId, Guid ClientId, Guid ContentId, [NotNull] string DomainName, [NotNull] string DomainPath) : IIntegrationEventMessage
 {
+    public Guid TenantId { get; } = TenantId;
+
     public Guid ClientId { get; } = ClientId;
+
     public Guid ContentId { get; } = ContentId;
 
     [NotNull]
-    public string EncodedContentData { get; } = EncodedContentData;
+    public string DomainName { get; } = DomainName;
+
+    [NotNull]
+    public string DomainPath { get; } = DomainPath;
 }
