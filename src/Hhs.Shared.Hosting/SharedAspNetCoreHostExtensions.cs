@@ -6,11 +6,8 @@ using HsnSoft.Base.Logging;
 using HsnSoft.Base.MultiTenancy;
 using HsnSoft.Base.Timing;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Hhs.Shared.Hosting;
 
@@ -53,32 +50,16 @@ public static class SharedAspNetCoreHostExtensions
         return services;
     }
 
-    public static IServiceCollection AddCorsSettings(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env, string corsName)
+    public static IServiceCollection AddCorsSettings(this IServiceCollection services, string corsName)
     {
         services.AddCors(options =>
         {
             options.AddPolicy(corsName, policy =>
             {
-                if (!env.IsProduction() || string.IsNullOrWhiteSpace(corsName) || corsName == "default")
-                {
-                    policy
-                        // .SetIsOriginAllowed((host) => true)
-                        .SetIsOriginAllowed(isOriginAllowed: _ => true)
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
-                }
-                else
-                {
-                    policy.WithOrigins( //new []{ "http://localhost:3000"}
-                            configuration["App:CorsOrigins"]
-                                ?.Split(",", StringSplitOptions.RemoveEmptyEntries)
-                                // .Select(o => o.Trim().RemovePostFix("/"))
-                                .ToArray() ?? throw new InvalidOperationException()
-                        )
-                        .SetIsOriginAllowedToAllowWildcardSubdomains()
-                        .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-                }
+                policy.SetIsOriginAllowed(isOriginAllowed: _ => true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
             });
         });
 
