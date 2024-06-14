@@ -79,3 +79,8 @@ end_of_line = crlf
 [*.{diff,md}]
 trim_trailing_whitespace = false
 max_line_length = off
+
+[*.{yml,yaml}]
+trim_trailing_whitespace = false
+indent_style = space
+indent_size = 2
