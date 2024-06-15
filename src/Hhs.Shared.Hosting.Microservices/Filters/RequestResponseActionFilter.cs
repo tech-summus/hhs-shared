@@ -40,7 +40,7 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
 
         var messages = new List<string> { "InvalidModelStateErrorMessage" };
 
-        if (!_env.IsProduction())
+        if (!_env.IsHhsProduction())
         {
             var errorsInModelState = context.ModelState
                 .Where(x => x.Value?.Errors.Count > 0)

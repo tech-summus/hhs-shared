@@ -28,7 +28,7 @@ internal sealed class ResponseExceptionHandler : IResponseExceptionHandler
                         .Select(data => $"{data.Key}: {data.Value}"));
                 }
 
-                if (be.InnerException != null && !env.IsProduction())
+                if (be.InnerException != null && !env.IsHhsProduction())
                 {
                     messages.AddRange(be.InnerException.GetMessages());
                 }
@@ -45,7 +45,7 @@ internal sealed class ResponseExceptionHandler : IResponseExceptionHandler
                         .Select(data => $"{data.Key}: {data.Value}"));
                 }
 
-                if (de.InnerException != null && !env.IsProduction())
+                if (de.InnerException != null && !env.IsHhsProduction())
                 {
                     messages.AddRange(de.InnerException.GetMessages());
                 }
@@ -62,7 +62,7 @@ internal sealed class ResponseExceptionHandler : IResponseExceptionHandler
                         .Select(data => $"{data.Key}: {data.Value}"));
                 }
 
-                if (he.InnerException != null && !env.IsProduction())
+                if (he.InnerException != null && !env.IsHhsProduction())
                 {
                     messages.AddRange(he.InnerException.GetMessages());
                 }
@@ -72,7 +72,7 @@ internal sealed class ResponseExceptionHandler : IResponseExceptionHandler
             default:
             {
                 messages.Add(GetStatusCodeDescription(code));
-                if (!env.IsProduction())
+                if (!env.IsHhsProduction())
                 {
                     if (!string.IsNullOrWhiteSpace(ex.Message)) messages.Add(ex.Message);
                     messages.AddRange(ex.InnerException.GetMessages());
