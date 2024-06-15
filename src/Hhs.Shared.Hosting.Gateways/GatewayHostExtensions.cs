@@ -19,7 +19,7 @@ public static class GatewayHostRegistration
         //.AddPolly();  //response time management
         //.AddCacheManager(settings => settings.WithDictionaryHandle()); //cache management
 
-        if (!env.IsProduction())
+        if (!env.IsHhsProduction())
         {
             // ocelotBuilder.AddDelegatingHandler<BaseRemoveCsrfCookieHandler>(true);
         }
