@@ -7,6 +7,7 @@ using Hhs.Shared.Hosting.Microservices.Models;
 using Hhs.Shared.Hosting.Microservices.Workers;
 using HsnSoft.Base.Application.Dtos;
 using HsnSoft.Base.AspNetCore.Hosting.Loader;
+using HsnSoft.Base.AspNetCore.Logging;
 using HsnSoft.Base.AspNetCore.Security.Claims;
 using HsnSoft.Base.AspNetCore.Serilog.Persistent;
 using HsnSoft.Base.AspNetCore.Tracing;
@@ -79,8 +80,7 @@ public static class MicroserviceHostExtensions
                 }
             });
 
-        services.AddSingleton<IRequestResponseLogger, RequestResponseLogger>();
-        services.AddScoped<IRequestResponseLogModelCreator, RequestResponseLogModelCreator>();
+        services.AddSingleton<IRequestResponseLogger, RequestLogger>();
         services.AddScoped<RequestResponseLoggerMiddleware>();
 
         services.AddSingleton<IResponseExceptionHandler, ResponseExceptionHandler>();

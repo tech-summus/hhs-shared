@@ -1,4 +1,8 @@
+using System.Diagnostics;
 using Hhs.Shared.Hosting.Microservices.Models;
+using HsnSoft.Base.AspNetCore.Logging;
+using HsnSoft.Base.AspNetCore.Tracing;
+using HsnSoft.Base.Users;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -7,17 +11,15 @@ namespace Hhs.Shared.Hosting.Microservices.Middlewares;
 
 public sealed class RequestResponseLoggerMiddleware : IMiddleware
 {
-    private readonly IRequestResponseLogModelCreator _logCreator;
     private readonly RequestResponseLoggerOption _options;
     private readonly IRequestResponseLogger _logger;
+    private readonly ICurrentUser _currentUser;
 
-    public RequestResponseLoggerMiddleware(IRequestResponseLogModelCreator logCreator,
-        IOptions<MicroserviceSettings> settings,
-        IRequestResponseLogger logger)
+    public RequestResponseLoggerMiddleware(IOptions<MicroserviceSettings> settings, IRequestResponseLogger logger, ICurrentUser currentUser)
     {
-        _logCreator = logCreator;
         _options = settings.Value.RequestResponseLogger;
         _logger = logger;
+        _currentUser = currentUser;
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -28,35 +30,56 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
             return;
         }
 
-        var log = _logCreator.LogModel;
-        log.RequestDateTimeUtc = DateTime.UtcNow;
+        var watch = new Stopwatch();
+        watch.Start();
+
+        var reqStartTime = DateTime.UtcNow;
+        var log = new RequestResponseLogModel();
         var request = context.Request;
 
         /*log*/
         log.LogId = Guid.NewGuid().ToString();
         log.TraceId = context.TraceIdentifier;
-        var ip = request.HttpContext.Connection.RemoteIpAddress;
-        log.ClientIp = ip?.ToString();
+        log.CorrelationId = context.GetCorrelationId();
+        log.Facility = RequestResponseLogFacility.HTTP_REQUEST_LOG.ToString();
         log.Node = _options.Name;
 
-        /*request*/
-        log.RequestMethod = request.Method;
-        log.RequestPath = request.Path;
-        log.RequestQuery = request.QueryString.ToString();
-        log.RequestQueries = FormatQueries(request.QueryString.ToString());
-        log.RequestHeaders = FormatHeaders(request.Headers);
-        log.RequestBody = await ReadBodyFromRequest(request);
-        log.RequestScheme = request.Scheme;
-        log.RequestHost = request.Host.ToString();
-        log.RequestContentType = request.ContentType;
 
-        // Temporarily replace the HttpResponseStream, 
-        // which is a write-only stream, with a MemoryStream to capture 
+        var ip = request.HttpContext.Connection.RemoteIpAddress;
+        log.ClientInfo = new ClientInfoLogDetail
+        {
+            ClientIp = ip?.ToString(),
+            ClientLat = context.GetClientRequestLat(),
+            ClientLong = context.GetClientRequestLong(),
+            ClientVersion = context.GetClientVersion(),
+            ClientUserId = _currentUser?.Id?.ToString(),
+            ClientUserRole = _currentUser?.Roles is { Length: > 0 } ? _currentUser?.Roles.First() : null
+        };
+
+        /*request*/
+        log.RequestInfo = new RequestInfoLogDetail
+        {
+            RequestDateTimeUtc = reqStartTime,
+            RequestMethod = request.Method,
+            RequestPath = request.Path,
+            RequestQuery = request.QueryString.ToString(),
+            RequestQueries = FormatQueries(request.QueryString.ToString()),
+            RequestHeaders = FormatHeaders(request.Headers),
+            RequestBody = await ReadBodyFromRequest(request),
+            RequestScheme = request.Scheme,
+            RequestHost = request.Host.ToString(),
+            RequestContentType = request.ContentType
+        };
+
+        // Temporarily replace the HttpResponseStream,
+        // which is a write-only stream, with a MemoryStream to capture
         // its value in-flight.
         var response = context.Response;
         var originalResponseBody = response.Body;
         var newResponseBody = new MemoryStream();
         response.Body = newResponseBody;
+
+        // _logger.RequestResponseInfoLog(log);
 
         try
         {
@@ -75,12 +98,18 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         await newResponseBody.CopyToAsync(originalResponseBody);
         await newResponseBody.DisposeAsync();
 
+        watch.Stop();
         /*response*/
-        log.ResponseContentType = response.ContentType;
-        log.ResponseStatus = response.StatusCode.ToString();
-        log.ResponseHeaders = FormatHeaders(response.Headers);
-        log.ResponseBody = responseBodyText;
-        log.ResponseDateTimeUtc = DateTime.UtcNow;
+        log.ResponseInfo = new ResponseInfoLogDetail
+        {
+            ResponseContentType = response.ContentType,
+            ResponseStatus = response.StatusCode.ToString(),
+            ResponseHeaders = FormatHeaders(response.Headers),
+            ResponseBody = responseBodyText,
+            ResponseDateTimeUtc = DateTime.UtcNow
+        };
+
+        log.RequestResponseWorkingTime = $"{watch.ElapsedMilliseconds:0.####}ms";
 
         /*exception: but was managed at app.UseExceptionHandler() or by any middleware*/
         var contextFeature = context.Features.Get<IExceptionHandlerPathFeature>();
@@ -90,8 +119,18 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
             LogError(log, exception);
         }
 
-        //var jsonString = logCreator.LogString(); /*log json*/
-        _logger.Log(_logCreator);
+        if (response.StatusCode >= 400)
+        {
+            log.Facility = RequestResponseLogFacility.HTTP_REQUEST_ERROR_LOG.ToString();
+            //var jsonString = logCreator.LogString(); /*log json*/
+            _logger.RequestResponseErrorLog(log);
+        }
+        else
+        {
+            log.Facility = RequestResponseLogFacility.HTTP_REQUEST_RESPONSE_LOG.ToString();
+            //var jsonString = logCreator.LogString(); /*log json*/
+            _logger.RequestResponseInfoLog(log);
+        }
     }
 
     private void LogError(RequestResponseLogModel log, Exception exception)
@@ -105,6 +144,12 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         var pairs = new Dictionary<string, string>();
         foreach (var header in headers)
         {
+            if (header.Key.Equals("Authorization") && header.Value.ToString().StartsWith("Bearer "))
+            {
+                pairs.Add(header.Key, "Bearer --AccessToken--");
+                continue;
+            }
+
             pairs.Add(header.Key, header.Value);
         }
 
@@ -130,12 +175,12 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
 
     private async Task<string> ReadBodyFromRequest(HttpRequest request)
     {
-        // Ensure the request's body can be read multiple times 
+        // Ensure the request's body can be read multiple times
         // (for the next middlewares in the pipeline).
         request.EnableBuffering();
         using var streamReader = new StreamReader(request.Body, leaveOpen: true);
         var requestBody = await streamReader.ReadToEndAsync();
-        // Reset the request's body stream position for 
+        // Reset the request's body stream position for
         // next middleware in the pipeline.
         request.Body.Position = 0;
         return requestBody;
