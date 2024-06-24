@@ -1,0 +1,26 @@
+rule "hhs_log_json_extract_rule"
+when
+  true
+then
+    let parsed_json = parse_json(to_string($message.full_message));
+    set_fields(select_jsonpath(parsed_json, {
+        CorrelationId: "$['CorrelationId']",
+        Facility: "$['Facility']",
+        ClientIp: "$['ClientInfo']['ClientIp']",
+        ClientUserId: "$['ClientInfo']['ClientUserId']",
+        ClientUserRole: "$['ClientInfo']['ClientUserRole']",
+        ClientLat: "$['ClientInfo']['ClientLat']",
+        ClientLong: "$['ClientInfo']['ClientLong']",
+        ClientVersion: "$['ClientInfo']['ClientVersion']",
+        ClientAgent: "$['RequestInfo']['RequestHeaders']['User-Agent']",
+        ClientAuthorization: "$['RequestInfo']['RequestHeaders']['Authorization']",
+        RequestDateTimeUtc: "$['RequestInfo']['RequestDateTimeUtc']",
+        RequestHost: "$['RequestInfo']['RequestHost']",
+        RequestPath: "$['RequestInfo']['RequestPath']",
+        RequestBody: "$['RequestInfo']['RequestBody']",
+        ResponseDateTimeUtc: "$['ResponseInfo']['ResponseDateTimeUtc']",
+        ResponseStatus: "$['ResponseInfo']['ResponseStatus']",
+        ResponseBody: "$['ResponseInfo']['ResponseBody']",
+        RequestResponseWorkingTime: "$['RequestResponseWorkingTime']"
+      }));
+end
