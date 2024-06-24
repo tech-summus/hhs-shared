@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Hhs.Shared.Hosting.Microservices.Models;
 using HsnSoft.Base.AspNetCore.Logging;
 using HsnSoft.Base.AspNetCore.Tracing;
@@ -13,13 +14,11 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
 {
     private readonly RequestResponseLoggerOption _options;
     private readonly IRequestResponseLogger _logger;
-    private readonly ICurrentUser _currentUser;
 
-    public RequestResponseLoggerMiddleware(IOptions<MicroserviceSettings> settings, IRequestResponseLogger logger, ICurrentUser currentUser)
+    public RequestResponseLoggerMiddleware(IOptions<MicroserviceSettings> settings, IRequestResponseLogger logger)
     {
         _options = settings.Value.RequestResponseLogger;
         _logger = logger;
-        _currentUser = currentUser;
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -52,8 +51,8 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
             ClientLat = context.GetClientRequestLat(),
             ClientLong = context.GetClientRequestLong(),
             ClientVersion = context.GetClientVersion(),
-            ClientUserId = _currentUser?.Id?.ToString(),
-            ClientUserRole = _currentUser?.Roles is { Length: > 0 } ? _currentUser?.Roles.First() : null
+            ClientUserId = Guid.Empty.ToString(),
+            ClientUserRole = "anonymous"
         };
 
         /*request*/
@@ -99,6 +98,9 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         await newResponseBody.DisposeAsync();
 
         watch.Stop();
+
+        SetSessionUserInfo(request.HttpContext.User, ref log);
+
         /*response*/
         log.ResponseInfo = new ResponseInfoLogDetail
         {
@@ -184,5 +186,20 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         // next middleware in the pipeline.
         request.Body.Position = 0;
         return requestBody;
+    }
+
+    private static void SetSessionUserInfo(ClaimsPrincipal principal, ref RequestResponseLogModel log)
+    {
+        var userIdOrNull = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+        if (userIdOrNull != null && !userIdOrNull.Value.IsNullOrWhiteSpace())
+        {
+            log.ClientInfo.ClientUserId = userIdOrNull.Value;
+        }
+
+        var roles = principal.Claims.Where(c => c.Type == ClaimTypes.Role).ToArray() ?? Array.Empty<Claim>();
+        if (roles is { Length: > 0 })
+        {
+            log.ClientInfo.ClientUserRole = roles.Select(c => c.Value).Distinct().ToArray().JoinAsString(",");
+        }
     }
 }
