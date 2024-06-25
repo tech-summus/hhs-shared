@@ -55,10 +55,10 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
             ClientUserRole = "anonymous"
         };
 
-        if (request.HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedClientIp))
-        {
-            log.ClientInfo.ClientIp = forwardedClientIp.ToString();
-        }
+        // if (request.HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedClientIp))
+        // {
+        //     log.ClientInfo.ClientIp = forwardedClientIp.ToString();
+        // }
 
         /*request*/
         log.RequestInfo = new RequestInfoLogDetail
@@ -75,11 +75,11 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
             RequestContentType = request.ContentType
         };
 
-        var originHostAddress = request.HttpContext.Request.Headers.Origin.ToString();
-        if (!string.IsNullOrWhiteSpace(originHostAddress))
-        {
-            log.RequestInfo.RequestHost = originHostAddress;
-        }
+        // var originHostAddress = request.HttpContext.Request.Headers.Origin.ToString();
+        // if (!string.IsNullOrWhiteSpace(originHostAddress))
+        // {
+        //     log.RequestInfo.RequestHost = originHostAddress;
+        // }
 
         // Temporarily replace the HttpResponseStream,
         // which is a write-only stream, with a MemoryStream to capture
