@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Hhs.Shared.Hosting.Microservices.Models;
 using HsnSoft.Base.AspNetCore.Logging;
 using HsnSoft.Base.AspNetCore.Tracing;
-using HsnSoft.Base.Users;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
