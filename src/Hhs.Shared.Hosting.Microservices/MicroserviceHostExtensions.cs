@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using Hhs.Shared.Hosting.Microservices.Filters;
 using Hhs.Shared.Hosting.Microservices.Handlers;
 using Hhs.Shared.Hosting.Microservices.Middlewares;
-using Hhs.Shared.Hosting.Microservices.Models;
 using Hhs.Shared.Hosting.Microservices.Workers;
 using HsnSoft.Base.Application.Dtos;
 using HsnSoft.Base.AspNetCore.Hosting.Loader;
@@ -116,20 +115,11 @@ public static class MicroserviceHostExtensions
         //     tags: new[] { "rabbitmq" }
         // );
 
-        // var kafka = new KafkaConnectionSettings();
-        // configuration.Bind("Kafka:Connection", kafka);
-        // hcBuilder.AddKafka(
-        //     new ProducerConfig { BootstrapServers = $"{kafka.HostName}:{kafka.Port}" },
-        //     name: $"{healtCheckPrefix}-kafka-check",
-        //     tags: new[] { "kafka" }
-        // );
-
         return services;
     }
 
     public static IServiceCollection AddMicroserviceEventBus(this IServiceCollection services, IConfiguration configuration, Assembly assembly)
     {
-        //  services.AddKafkaEventBus(configuration);
         services.AddRabbitMqEventBus(configuration);
 
         // Add All Event Handlers
@@ -137,21 +127,6 @@ public static class MicroserviceHostExtensions
 
         return services;
     }
-
-    // private static void AddKafkaEventBus(this IServiceCollection services, IConfiguration configuration)
-    // {
-    //     // Add configuration objects
-    //     services.Configure<KafkaConnectionSettings>(configuration.GetSection("Kafka:Connection"));
-    //     services.Configure<KafkaEventBusConfig>(configuration.GetSection("Kafka:EventBus"));
-    //
-    //     // Add event bus instances
-    //     services.AddHttpContextAccessor();
-    //     services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
-    //     services.AddScoped<ICurrentUser, CurrentUser>();
-    //     services.AddSingleton<ITraceAccesor, HttpContextTraceAccessor>();
-    //     services.AddSingleton<IEventBusLogger, SerilogEventBusLogger>();
-    //     services.AddSingleton<IEventBus, EventBusKafka>(sp => new EventBusKafka(sp));
-    // }
 
     private static void AddRabbitMqEventBus(this IServiceCollection services, IConfiguration configuration)
     {

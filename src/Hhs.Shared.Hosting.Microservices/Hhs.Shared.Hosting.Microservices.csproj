@@ -17,16 +17,13 @@
         <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="7.0.0" />
         <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.0.0" />
         <!--<PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="7.0.0" />-->
-        <!--<PackageReference Include="AspNetCore.HealthChecks.Kafka" Version="7.0.0" />-->
         <!--<PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="7.0.0" />-->
         <!--<PackageReference Include="AspNetCore.HealthChecks.Redis" Version="7.0.0" />-->
         <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="$(MicrosoftAspNetCorePackageVersion)" />
     </ItemGroup>
 
     <ItemGroup>
-        <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.EventBus.Kafka\HsnSoft.Base.EventBus.Kafka.csproj" />-->
         <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.EventBus.RabbitMQ\HsnSoft.Base.EventBus.RabbitMQ.csproj" />-->
-        <!--<PackageReference Include="HsnSoft.Base.EventBus.Kafka" Version="$(HsnSoftFrameworkVersion)" />-->
         <PackageReference Include="HsnSoft.Base.EventBus.RabbitMQ" Version="$(HsnSoftFrameworkVersion)" />
     </ItemGroup>
 

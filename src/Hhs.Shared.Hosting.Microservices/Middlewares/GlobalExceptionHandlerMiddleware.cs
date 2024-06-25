@@ -3,7 +3,6 @@ using HsnSoft.Base.Communication;
 using HsnSoft.Base.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 
 namespace Hhs.Shared.Hosting.Microservices.Middlewares;
 
