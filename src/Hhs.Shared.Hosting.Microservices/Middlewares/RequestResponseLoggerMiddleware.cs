@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Hhs.Shared.Hosting.Microservices.Models;
 using HsnSoft.Base.AspNetCore.Logging;
 using HsnSoft.Base.AspNetCore.Tracing;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
@@ -46,18 +45,37 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         var ip = request.HttpContext.Connection.RemoteIpAddress;
         log.ClientInfo = new ClientInfoLogDetail
         {
-            ClientIp = ip?.ToString(),
+            GatewayIp = ip?.ToString(),
+            ClientOriginIp = null,
+            ClientOriginHost = null,
             ClientLat = context.GetClientRequestLat(),
             ClientLong = context.GetClientRequestLong(),
             ClientVersion = context.GetClientVersion(),
             ClientUserId = Guid.Empty.ToString(),
-            ClientUserRole = "anonymous"
+            ClientUserRole = "anonymous",
+            ClientUserAgent = null,
+            ClientLanguage = "en"
         };
 
-        // if (request.HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedClientIp))
-        // {
-        //     log.ClientInfo.ClientIp = forwardedClientIp.ToString();
-        // }
+        if (request.HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedClientIp))
+        {
+            log.ClientInfo.ClientOriginIp = forwardedClientIp.ToString();
+        }
+
+        if (request.HttpContext.Request.Headers.TryGetValue("Origin", out var originHost))
+        {
+            log.ClientInfo.ClientOriginHost = originHost.ToString();
+        }
+
+        if (request.HttpContext.Request.Headers.TryGetValue("User-Agent", out var userAgent))
+        {
+            log.ClientInfo.ClientUserAgent = userAgent.ToString();
+        }
+
+        if (request.HttpContext.Request.Headers.TryGetValue("Accept-Language", out var acceptLanguage))
+        {
+            log.ClientInfo.ClientLanguage = acceptLanguage.ToString();
+        }
 
         /*request*/
         log.RequestInfo = new RequestInfoLogDetail
@@ -65,13 +83,13 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
             RequestDateTimeUtc = reqStartTime,
             RequestMethod = request.Method,
             RequestPath = request.Path,
-            RequestQuery = request.QueryString.ToString(),
-            RequestQueries = FormatQueries(request.QueryString.ToString()),
-            RequestHeaders = FormatHeaders(request.Headers),
+            // RequestQuery = request.QueryString.ToString(),
+            // RequestQueries = FormatQueries(request.QueryString.ToString()),
+            // RequestHeaders = FormatHeaders(request.Headers),
             RequestBody = await ReadBodyFromRequest(request),
             RequestScheme = request.Scheme,
             RequestHost = request.Host.ToString(),
-            RequestContentType = request.ContentType
+            // RequestContentType = request.ContentType
         };
 
         // var originHostAddress = request.HttpContext.Request.Headers.Origin.ToString();
@@ -97,7 +115,8 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         }
         catch (Exception exception)
         {
-            LogError(log, exception);
+            _logger.LogError(exception.Message);
+            // LogError(log, exception);
         }
 
         newResponseBody.Seek(0, SeekOrigin.Begin);
@@ -114,9 +133,9 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         /*response*/
         log.ResponseInfo = new ResponseInfoLogDetail
         {
-            ResponseContentType = response.ContentType,
+            // ResponseContentType = response.ContentType,
             ResponseStatus = response.StatusCode.ToString(),
-            ResponseHeaders = FormatHeaders(response.Headers),
+            // ResponseHeaders = FormatHeaders(response.Headers),
             ResponseBody = responseBodyText,
             ResponseDateTimeUtc = DateTime.UtcNow
         };
@@ -124,12 +143,12 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         log.RequestResponseWorkingTime = $"{watch.ElapsedMilliseconds:0.####}ms";
 
         /*exception: but was managed at app.UseExceptionHandler() or by any middleware*/
-        var contextFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-        if (contextFeature != null)
-        {
-            var exception = contextFeature.Error;
-            LogError(log, exception);
-        }
+        // var contextFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+        // if (contextFeature != null)
+        // {
+        //     var exception = contextFeature.Error;
+        //     LogError(log, exception);
+        // }
 
         if (response.StatusCode >= 400)
         {
@@ -145,11 +164,11 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         }
     }
 
-    private void LogError(RequestResponseLogModel log, Exception exception)
-    {
-        log.ExceptionMessage = exception.Message;
-        log.ExceptionStackTrace = exception.StackTrace;
-    }
+    // private void LogError(RequestResponseLogModel log, Exception exception)
+    // {
+    //     log.ExceptionMessage = exception.Message;
+    //     log.ExceptionStackTrace = exception.StackTrace;
+    // }
 
     private Dictionary<string, string> FormatHeaders(IHeaderDictionary headers)
     {
