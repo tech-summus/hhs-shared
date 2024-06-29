@@ -67,6 +67,22 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
             log.ClientInfo.ClientOriginHost = originHost.ToString();
         }
 
+        if (string.IsNullOrWhiteSpace(log.ClientInfo.ClientOriginHost) || log.ClientInfo.ClientOriginHost == "null")
+        {
+            if (request.HttpContext.Request.Headers.TryGetValue("Referer", out var refererHost))
+            {
+                log.ClientInfo.ClientOriginHost = refererHost.ToString();
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(log.ClientInfo.ClientOriginHost) || log.ClientInfo.ClientOriginHost == "null")
+        {
+            if (request.HttpContext.Request.Headers.TryGetValue("From", out var fromHost))
+            {
+                log.ClientInfo.ClientOriginHost = fromHost.ToString();
+            }
+        }
+
         if (request.HttpContext.Request.Headers.TryGetValue("User-Agent", out var userAgent))
         {
             log.ClientInfo.ClientUserAgent = userAgent.ToString();
