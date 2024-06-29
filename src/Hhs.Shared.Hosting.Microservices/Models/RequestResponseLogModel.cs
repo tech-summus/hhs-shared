@@ -40,9 +40,9 @@ public sealed class RequestInfoLogDetail
     public string RequestHost { get; set; }
 
     public string RequestPath { get; set; }
-    // public Dictionary<string, string> RequestHeaders { get; set; }
-    //
-    // public string RequestQuery { get; set; }
+    public Dictionary<string, string> RequestHeaders { get; set; }
+
+    public string RequestQuery { get; set; }
     // public List<KeyValuePair<string, string>> RequestQueries { get; set; }
 
     public string RequestBody { get; set; }
@@ -53,7 +53,7 @@ public sealed class ResponseInfoLogDetail
 {
     public DateTime? ResponseDateTimeUtc { get; set; }
     public string ResponseStatus { get; set; }
-    // public Dictionary<string, string> ResponseHeaders { get; set; }
+    public Dictionary<string, string> ResponseHeaders { get; set; }
     public string ResponseBody { get; set; }
     // public string ResponseContentType { get; set; }
 }

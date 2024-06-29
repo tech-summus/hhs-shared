@@ -91,12 +91,8 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
             RequestHost = request.Host.ToString(),
             // RequestContentType = request.ContentType
         };
-
-        // var originHostAddress = request.HttpContext.Request.Headers.Origin.ToString();
-        // if (!string.IsNullOrWhiteSpace(originHostAddress))
-        // {
-        //     log.RequestInfo.RequestHost = originHostAddress;
-        // }
+        var requestQuery = request.QueryString.ToString();
+        var requestHeaders = FormatHeaders(request.Headers);
 
         // Temporarily replace the HttpResponseStream,
         // which is a write-only stream, with a MemoryStream to capture
@@ -131,6 +127,7 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         SetSessionUserInfo(request.HttpContext.User, ref log);
 
         /*response*/
+        var responseHeader = FormatHeaders(response.Headers);
         log.ResponseInfo = new ResponseInfoLogDetail
         {
             // ResponseContentType = response.ContentType,
@@ -160,6 +157,9 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         {
             log.Facility = RequestResponseLogFacility.HTTP_REQUEST_RESPONSE_LOG.ToString();
             //var jsonString = logCreator.LogString(); /*log json*/
+            log.RequestInfo.RequestHeaders = requestHeaders;
+            log.RequestInfo.RequestQuery = requestQuery;
+            log.ResponseInfo.ResponseHeaders = responseHeader;
             _logger.RequestResponseInfoLog(log);
         }
     }
