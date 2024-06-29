@@ -151,15 +151,15 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         {
             log.Facility = RequestResponseLogFacility.HTTP_REQUEST_ERROR_LOG.ToString();
             //var jsonString = logCreator.LogString(); /*log json*/
+            log.RequestInfo.RequestHeaders = requestHeaders;
+            log.RequestInfo.RequestQuery = requestQuery;
+            log.ResponseInfo.ResponseHeaders = responseHeader;
             _logger.RequestResponseErrorLog(log);
         }
         else
         {
             log.Facility = RequestResponseLogFacility.HTTP_REQUEST_RESPONSE_LOG.ToString();
             //var jsonString = logCreator.LogString(); /*log json*/
-            log.RequestInfo.RequestHeaders = requestHeaders;
-            log.RequestInfo.RequestQuery = requestQuery;
-            log.ResponseInfo.ResponseHeaders = responseHeader;
             _logger.RequestResponseInfoLog(log);
         }
     }
