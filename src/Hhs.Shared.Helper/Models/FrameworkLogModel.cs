@@ -1,6 +1,6 @@
 using HsnSoft.Base.Logging;
 
-namespace Hhs.Shared.Hosting.Microservices.Models;
+namespace Hhs.Shared.Helper.Models;
 
 public sealed class FrameworkLogModel : IPersistentLog
 {
@@ -16,5 +16,5 @@ public sealed class StackTraceLogDetail
 {
     public string StackFileName { get; set; }
     public string StackMethodName { get; set; }
-    public string StackLineNumber { get; set; }
+    public int StackLineNumber { get; set; }
 }
