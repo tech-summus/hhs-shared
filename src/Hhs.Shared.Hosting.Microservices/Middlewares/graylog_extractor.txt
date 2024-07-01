@@ -1,4 +1,4 @@
-rule "hhs_log_json_extract_rule"
+rule "hhs_event_json_extract_rule"
 when
   true
 then
@@ -6,21 +6,101 @@ then
     set_fields(select_jsonpath(parsed_json, {
         CorrelationId: "$['CorrelationId']",
         Facility: "$['Facility']",
-        ClientIp: "$['ClientInfo']['ClientIp']",
+
+        EventType: "$['MessageLog']['EventType']",
+        HopLevel: "$['MessageLog']['HopLevel']",
+        ParentMessageId: "$['MessageLog']['ParentMessageId']",
+        MessageId: "$['MessageLog']['MessageId']",
+        MessageBody: "$['MessageLog']['Message']",
+        MessageUserId: "$['MessageLog']['UserInfo']['UserId']",
+        MessageRole: "$['MessageLog']['UserInfo']['Role']",
+
+        ConsumeDateTimeUtc: "$['ConsumeDateTimeUtc']",
+        ConsumeHandleWorkingTime: "$['ConsumeHandleWorkingTime']",
+        ConsumeDetails: "$['ConsumeDetails']"
+      }));
+end
+
+
+rule "hhs_framework_full_message_extract_rule"
+when
+ has_field("full_message")
+then
+
+    let parsed_json = parse_json(to_string($message.full_message));
+    set_fields(select_jsonpath(parsed_json, {
+        CorrelationId: "$['CorrelationId']",
+        Facility: "$['Facility']",
+        Description: "$['Description']",
+        Reference: "$['Reference']",
+        StackFileName: "$['StackTrace']['StackFileName']",
+        StackMethodName: "$['StackTrace']['StackMethodName']",
+        StackLineNumber: "$['StackTrace']['StackLineNumber']"
+      }));
+end
+
+
+rule "hhs_framework_message_extract_rule"
+
+when
+ has_field("message")
+then
+
+    let parsed_json = parse_json(to_string($message.message));
+    set_fields(select_jsonpath(parsed_json, {
+        CorrelationId: "$['CorrelationId']",
+        Facility: "$['Facility']",
+        Description: "$['Description']",
+        Reference: "$['Reference']",
+        StackFileName: "$['StackTrace']['StackFileName']",
+        StackMethodName: "$['StackTrace']['StackMethodName']",
+        StackLineNumber: "$['StackTrace']['StackLineNumber']"
+      }));
+end
+
+
+rule "hhs_req_res_json_extract_rule"
+when
+  true
+then
+    let parsed_json = parse_json(to_string($message.full_message));
+    set_fields(select_jsonpath(parsed_json, {
+        TraceId: "$['TraceId']",
+        CorrelationId: "$['CorrelationId']",
+        Facility: "$['Facility']",
+        GatewayIp: "$['ClientInfo']['GatewayIp']",
+        ClientOriginIp: "$['ClientInfo']['ClientOriginIp']",
+        ClientOriginHost: "$['ClientInfo']['ClientOriginHost']",
         ClientUserId: "$['ClientInfo']['ClientUserId']",
         ClientUserRole: "$['ClientInfo']['ClientUserRole']",
+        ClientUserAgent: "$['ClientInfo']['ClientUserAgent']",
         ClientLat: "$['ClientInfo']['ClientLat']",
         ClientLong: "$['ClientInfo']['ClientLong']",
         ClientVersion: "$['ClientInfo']['ClientVersion']",
-        ClientAgent: "$['RequestInfo']['RequestHeaders']['User-Agent']",
-        ClientAuthorization: "$['RequestInfo']['RequestHeaders']['Authorization']",
-        RequestDateTimeUtc: "$['RequestInfo']['RequestDateTimeUtc']",
+        ClientLanguage: "$['ClientInfo']['ClientLanguage']",
         RequestHost: "$['RequestInfo']['RequestHost']",
         RequestPath: "$['RequestInfo']['RequestPath']",
+        RequestMethod: "$['RequestInfo']['RequestMethod']",
         RequestBody: "$['RequestInfo']['RequestBody']",
-        ResponseDateTimeUtc: "$['ResponseInfo']['ResponseDateTimeUtc']",
         ResponseStatus: "$['ResponseInfo']['ResponseStatus']",
         ResponseBody: "$['ResponseInfo']['ResponseBody']",
+        RequestDateTimeUtc: "$['RequestInfo']['RequestDateTimeUtc']",
+        ResponseDateTimeUtc: "$['ResponseInfo']['ResponseDateTimeUtc']",
         RequestResponseWorkingTime: "$['RequestResponseWorkingTime']"
       }));
 end
+
+
+
+
+HHS_Event_Stream => stream rules
+source must match exactly graylog-http-gelf
+LogType must match exactly EventBusLog
+
+HHS_Framework_Stream => stream rules
+source must match exactly graylog-http-gelf
+LogType must match exactly FrameworkLog
+
+HHS_Request_Response_Stream => stream rules
+source must match exactly graylog-http-gelf
+LogType must match exactly RequestResponseLog
