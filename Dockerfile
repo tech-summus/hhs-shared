@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS base
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS base
 WORKDIR /packages
 USER root
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-stage
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-stage
 WORKDIR /build-source
 
 COPY ["./nuget.config", "./"]
