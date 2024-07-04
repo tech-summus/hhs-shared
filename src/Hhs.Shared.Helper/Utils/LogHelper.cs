@@ -6,7 +6,7 @@ namespace Hhs.Shared.Helper.Utils;
 
 public static class LogHelper
 {
-    public static FrameworkLogModel Generate([NotNull] string message, [CanBeNull] string reference = null, [CanBeNull] string facility = null, [CanBeNull] string correlationId = null, Exception exception = null)
+    public static FrameworkLogModel Generate([NotNull] string message, object reference = null, [CanBeNull] string facility = null, [CanBeNull] string correlationId = null, Exception exception = null)
     {
         var result = new FrameworkLogModel
         {
