@@ -11,10 +11,10 @@ public sealed class FrameworkLogModel : IPersistentLog
     [CanBeNull]
     public string CorrelationId { get; set; } /*HttpContext CorrelationId*/
 
-    [NotNull]
+    [CanBeNull]
     public string Facility { get; set; }
 
-    [CanBeNull]
+    [NotNull]
     public string Description { get; set; }
 
     public object Reference { get; set; }
