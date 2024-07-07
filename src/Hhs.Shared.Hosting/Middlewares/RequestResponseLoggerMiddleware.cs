@@ -123,7 +123,7 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         await newResponseBody.DisposeAsync();
 
         watch.Stop();
-
+        var elapsedMiliseconds = watch.ElapsedMilliseconds;
         SetSessionUserInfo(request.HttpContext.User, ref log);
 
         /*response*/
@@ -135,9 +135,9 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
             ResponseDateTimeUtc = DateTime.UtcNow
         };
 
-        log.RequestResponseWorkingTime = $"{watch.ElapsedMilliseconds:0.####}ms";
+        log.RequestResponseWorkingTime = $"{elapsedMiliseconds:0.####}ms";
 
-        if (response.StatusCode >= 400)
+        if (response?.StatusCode >= 400)
         {
             log.Facility = RequestResponseLogFacility.HTTP_REQUEST_ERROR_LOG.ToString();
             log.RequestInfo.RequestHeaders = requestHeaders;
