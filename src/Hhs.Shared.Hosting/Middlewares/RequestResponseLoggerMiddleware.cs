@@ -44,42 +44,32 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         var ip = request.HttpContext.Connection.RemoteIpAddress;
         log.ClientInfo = new ClientInfoLogDetail
         {
-            GatewayIp = ip?.ToString(),
-            ClientOriginIp = null,
-            ClientOriginHost = null,
+            LocalIp = ip?.ToString(),
             ClientLat = context.GetClientRequestLat(),
             ClientLong = context.GetClientRequestLong(),
             ClientVersion = context.GetClientVersion(),
             ClientUserId = Guid.Empty.ToString(),
-            ClientUserRole = "anonymous",
-            ClientUserAgent = null,
-            ClientLanguage = "en"
+            ClientUserRole = "anonymous"
         };
 
         if (request.HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedClientIp))
         {
-            log.ClientInfo.ClientOriginIp = forwardedClientIp.ToString();
+            log.ClientInfo.ClientForwardedIp = forwardedClientIp.ToString();
         }
 
         if (request.HttpContext.Request.Headers.TryGetValue("Origin", out var originHost))
         {
-            log.ClientInfo.ClientOriginHost = originHost.ToString();
+            log.ClientInfo.ClientOrigin = originHost.ToString();
         }
 
-        if (string.IsNullOrWhiteSpace(log.ClientInfo.ClientOriginHost) || log.ClientInfo.ClientOriginHost == "null")
+        if (request.HttpContext.Request.Headers.TryGetValue("Referer", out var refererHost))
         {
-            if (request.HttpContext.Request.Headers.TryGetValue("Referer", out var refererHost))
-            {
-                log.ClientInfo.ClientOriginHost = refererHost.ToString();
-            }
+            log.ClientInfo.ClientReferer = refererHost.ToString();
         }
 
-        if (string.IsNullOrWhiteSpace(log.ClientInfo.ClientOriginHost) || log.ClientInfo.ClientOriginHost == "null")
+        if (request.HttpContext.Request.Headers.TryGetValue("From", out var fromHost))
         {
-            if (request.HttpContext.Request.Headers.TryGetValue("From", out var fromHost))
-            {
-                log.ClientInfo.ClientOriginHost = fromHost.ToString();
-            }
+            log.ClientInfo.ClientFrom = fromHost.ToString();
         }
 
         if (request.HttpContext.Request.Headers.TryGetValue("User-Agent", out var userAgent))
@@ -158,12 +148,6 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         else
         {
             log.Facility = RequestResponseLogFacility.HTTP_REQUEST_RESPONSE_LOG.ToString();
-
-            //TODO: Remove after test
-            log.RequestInfo.RequestHeaders = requestHeaders;
-            log.RequestInfo.RequestQuery = requestQuery;
-            log.ResponseInfo.ResponseHeaders = responseHeader;
-            /////////////////////////
 
             _logger.RequestResponseInfoLog(log);
         }
