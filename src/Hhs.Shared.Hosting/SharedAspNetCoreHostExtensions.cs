@@ -1,6 +1,8 @@
 using System.Security.Cryptography;
+using Hhs.Shared.Hosting.Middlewares;
 using HsnSoft.Base;
 using HsnSoft.Base.AspNetCore;
+using HsnSoft.Base.AspNetCore.Logging;
 using HsnSoft.Base.AspNetCore.Mvc.Services;
 using HsnSoft.Base.AspNetCore.Serilog;
 using HsnSoft.Base.AspNetCore.Serilog.Persistent;
@@ -22,7 +24,7 @@ namespace Hhs.Shared.Hosting;
 public static class SharedAspNetCoreHostExtensions
 {
     // All hostings
-    public static IServiceCollection ConfigureSharedHost(this IServiceCollection services)
+    public static IServiceCollection ConfigureSharedHost(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions();
         services.AddEndpointsApiExplorer();
@@ -33,13 +35,17 @@ public static class SharedAspNetCoreHostExtensions
         services.AddSingleton<IBaseLogger, BaseLogger>();
         services.AddSingleton<IFrameworkLogger, FrameworkLogger>();
 
+        services.Configure<HostingSettings>(configuration.GetSection("HostingSettings"));
+        services.AddSingleton<IRequestResponseLogger, RequestLogger>();
+        services.AddScoped<RequestResponseLoggerMiddleware>();
+
         return services;
     }
 
     // Microservices and Mvc Apps Base
-    public static IServiceCollection ConfigureSharedAspNetCoreHost(this IServiceCollection services)
+    public static IServiceCollection ConfigureSharedAspNetCoreHost(this IServiceCollection services, IConfiguration configuration)
     {
-        services.ConfigureSharedHost();
+        services.ConfigureSharedHost(configuration);
 
         services.AddBaseAspNetCoreContextCollection();
         services.AddBaseAspNetCoreJsonLocalization();

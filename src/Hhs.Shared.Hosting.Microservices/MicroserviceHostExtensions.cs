@@ -6,7 +6,6 @@ using Hhs.Shared.Hosting.Microservices.Middlewares;
 using Hhs.Shared.Hosting.Microservices.Workers;
 using HsnSoft.Base.Application.Dtos;
 using HsnSoft.Base.AspNetCore.Hosting.Loader;
-using HsnSoft.Base.AspNetCore.Logging;
 using HsnSoft.Base.AspNetCore.Security.Claims;
 using HsnSoft.Base.AspNetCore.Serilog.Persistent;
 using HsnSoft.Base.AspNetCore.Tracing;
@@ -29,7 +28,7 @@ namespace Hhs.Shared.Hosting.Microservices;
 
 public static class MicroserviceHostExtensions
 {
-    public static IServiceCollection ConfigureMicroserviceHost(this IServiceCollection services)
+    public static IServiceCollection ConfigureMicroserviceHost(this IServiceCollection services, IConfiguration configuration)
     {
         Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
 
@@ -39,7 +38,7 @@ public static class MicroserviceHostExtensions
         // Set filter limit value
         SearchLimitedResultRequestDto.MaxMaxResultCount = 20;
 
-        services.ConfigureSharedAspNetCoreHost();
+        services.ConfigureSharedAspNetCoreHost(configuration);
 
         // Loader functionality
         services.AddTransient<IBasicLoader, DefaultBasicLoader>();
@@ -54,8 +53,7 @@ public static class MicroserviceHostExtensions
 
     public static IServiceCollection AddAdvancedController(this IServiceCollection services, IConfiguration configuration, Type type)
     {
-        // Add our Config object so it can be injected
-        services.Configure<MicroserviceSettings>(configuration.GetSection("MicroserviceSettings"));
+        services.Configure<MicroserviceHostingSettings>(configuration.GetSection("HostingSettings"));
 
         services.AddControllers(options =>
             {
@@ -69,18 +67,15 @@ public static class MicroserviceHostExtensions
             .AddApplicationPart(type.Assembly)
             .AddJsonOptions(options =>
             {
-                var microserviceSettings = new MicroserviceSettings();
-                configuration.Bind("MicroserviceSettings", microserviceSettings);
+                var hostingSettings = new MicroserviceHostingSettings();
+                configuration.Bind("HostingSettings", hostingSettings);
 
                 options.JsonSerializerOptions.WriteIndented = true;
-                if (microserviceSettings.IgnoreNullValueForJsonResponse)
+                if (hostingSettings.IgnoreNullValueForJsonResponse)
                 {
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
                 }
             });
-
-        services.AddSingleton<IRequestResponseLogger, RequestLogger>();
-        services.AddScoped<RequestResponseLoggerMiddleware>();
 
         services.AddSingleton<IResponseExceptionHandler, ResponseExceptionHandler>();
         services.AddScoped<GlobalExceptionHandlerMiddleware>();

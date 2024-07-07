@@ -1,6 +1,6 @@
 using HsnSoft.Base.AspNetCore.Logging;
 
-namespace Hhs.Shared.Hosting.Microservices.Models;
+namespace Hhs.Shared.Hosting.Models;
 
 public sealed class RequestResponseLogModel : IRequestResponseLog
 {

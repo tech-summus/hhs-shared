@@ -17,12 +17,12 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
     private readonly IBaseLogger _logger;
     private readonly IResponseExceptionHandler _handler;
     private readonly IWebHostEnvironment _env;
-    private readonly MicroserviceSettings _settings;
+    private readonly MicroserviceHostingSettings _settings;
 
     public RequestResponseActionFilterAttribute(IBaseLogger logger,
         IResponseExceptionHandler handler,
         IWebHostEnvironment env,
-        IOptions<MicroserviceSettings> settings,
+        IOptions<MicroserviceHostingSettings> settings,
         IStringLocalizerFactory factory)
     {
         _logger = logger;

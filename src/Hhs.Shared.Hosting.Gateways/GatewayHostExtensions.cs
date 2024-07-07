@@ -10,7 +10,9 @@ public static class GatewayHostRegistration
 {
     public static IServiceCollection ConfigureGatewayHost(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
     {
-        services.ConfigureSharedHost();
+        services.ConfigureSharedHost(configuration);
+
+        services.Configure<GatewayHostingSettings>(configuration.GetSection("HostingSettings"));
 
         var ocelotBuilder = services.AddOcelot(configuration)
             .AddAppConfiguration(); //mmlib configuration service address discover
