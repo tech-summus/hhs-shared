@@ -31,7 +31,7 @@ public static class SharedAspNetCoreHostExtensions
         services.AddScoped<IActionContextAccessor, ActionContextAccessor>();
 
         services.AddSingleton<IBaseLogger, BaseLogger>();
-        services.AddSingleton<IPersistentLogger, FrameworkLogger>();
+        services.AddSingleton<IFrameworkLogger, FrameworkLogger>();
 
         return services;
     }
