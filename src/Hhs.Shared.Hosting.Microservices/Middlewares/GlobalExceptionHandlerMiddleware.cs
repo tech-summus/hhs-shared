@@ -44,7 +44,8 @@ public sealed class GlobalExceptionHandlerMiddleware : IMiddleware
             _logger.LogError("GlobalExceptionHandlerMiddleware -> Error Message: {ErrorMessage}", exception.Message);
             var (code, messages) = _handler.Handle(exception, _env);
             response.StatusCode = code;
-            await response.WriteAsJsonAsync(new BaseResponse { StatusCode = code, StatusMessages = messages });
+            //await response.WriteAsJsonAsync(new BaseResponse { StatusCode = code, StatusMessages = messages });
+            await response.WriteAsync(new BaseResponse { StatusCode = code, StatusMessages = messages }.ToJsonString());
 
             #endregion
         }
@@ -76,11 +77,16 @@ public sealed class GlobalExceptionHandlerMiddleware : IMiddleware
                 #endregion
             }
 
-            await response.WriteAsJsonAsync(new BaseResponse
+            // await response.WriteAsJsonAsync(new BaseResponse
+            // {
+            //     StatusCode = response.StatusCode,
+            //     StatusMessages = new List<string> { _handler.GetStatusCodeDescription(response.StatusCode) }
+            // });
+            await response.WriteAsync(new BaseResponse
             {
                 StatusCode = response.StatusCode,
                 StatusMessages = new List<string> { _handler.GetStatusCodeDescription(response.StatusCode) }
-            });
+            }.ToJsonString());
         }
 
         if (!_env.IsHhsProduction() && response.StatusCode >= 400)
