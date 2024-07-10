@@ -39,6 +39,8 @@ public static class SharedAspNetCoreHostExtensions
         services.AddSingleton<IRequestResponseLogger, RequestLogger>();
         services.AddScoped<RequestResponseLoggerMiddleware>();
 
+        services.AddScoped<SearchEngineAgentMiddleware>();
+
         return services;
     }
 
