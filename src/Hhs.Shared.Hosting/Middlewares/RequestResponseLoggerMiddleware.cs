@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using Hhs.Shared.Hosting.Models;
 using HsnSoft.Base.AspNetCore.Logging;
@@ -143,6 +144,12 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
             log.RequestInfo.RequestHeaders = requestHeaders;
             log.RequestInfo.RequestQuery = requestQuery;
             log.ResponseInfo.ResponseHeaders = responseHeader;
+
+            if (!string.IsNullOrWhiteSpace(log.ClientInfo.ClientForwardedIp))
+            {
+                log.ClientInfo.ClientForwardedDetails = await GetIpDetails(log.ClientInfo.ClientForwardedIp);
+            }
+
             _logger.RequestResponseErrorLog(log);
         }
         else
@@ -198,6 +205,21 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         // next middleware in the pipeline.
         request.Body.Position = 0;
         return requestBody;
+    }
+
+    private async Task<IpLookupLogDetail> GetIpDetails(string ipAddress)
+    {
+        try
+        {
+            var route = $"http://ip-api.com/json/{ipAddress}?fields=21230333";
+            return await new HttpClient().GetFromJsonAsync<IpLookupLogDetail>(route);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+
+        return null;
     }
 
     private static void SetSessionUserInfo(ClaimsPrincipal principal, ref RequestResponseLogModel log)

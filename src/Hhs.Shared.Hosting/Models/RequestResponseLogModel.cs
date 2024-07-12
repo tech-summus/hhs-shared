@@ -18,6 +18,7 @@ public sealed class ClientInfoLogDetail
 {
     public string LocalIp { get; set; }
     public string ClientForwardedIp { get; set; } // X-Forwarded-For
+    public IpLookupLogDetail ClientForwardedDetails { get; set; } // X-Forwarded-For
     public string ClientOrigin { get; set; }
     public string ClientReferer { get; set; }
     public string ClientFrom { get; set; }
