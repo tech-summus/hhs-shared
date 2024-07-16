@@ -3,9 +3,9 @@ using JetBrains.Annotations;
 
 namespace Hhs.Shared.Contracts.Events;
 
-public sealed record ContentNormalizedResultEto(Guid ContentId, bool IsNormalizedSuccess, Guid NormalizedRequestId,DateTime? ReleaseTime, [CanBeNull] string EncodedNormalizedResult) : IIntegrationEventMessage
+public sealed record AppContentNormalizedResultEto(Guid AppContentId, bool IsNormalizedSuccess, Guid NormalizedRequestId,DateTime? ReleaseTime, [CanBeNull] string EncodedNormalizedResult) : IIntegrationEventMessage
 {
-    public Guid ContentId { get; } = ContentId;
+    public Guid AppContentId { get; } = AppContentId;
     public bool IsNormalizedSuccess { get; } = IsNormalizedSuccess;
 
     public Guid NormalizedRequestId { get; } = NormalizedRequestId;
