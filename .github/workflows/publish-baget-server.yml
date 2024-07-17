@@ -28,7 +28,7 @@ jobs:
           context: .
           file: ./Dockerfile
           secrets: |
-            "NUGET_SOURCE=http://techsummus.com:8011/v3/index.json"
+            "NUGET_SOURCE=https://baget-server.techsummus.com/v3/index.json"
             "NUGET_SECRET=${{ secrets.REPO_BAGET_USER_SECRET }}"
             "VERSION_NUMBER=${{ steps.get-version.outputs.version }}"
             "ACTION_NUMBER=${{ github.run_number }}"
