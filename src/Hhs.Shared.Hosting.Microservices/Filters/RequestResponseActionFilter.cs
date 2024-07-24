@@ -1,13 +1,15 @@
 using System.Net;
-using System.Text.Json;
 using Hhs.Shared.Hosting.Microservices.Handlers;
 using HsnSoft.Base.Communication;
+using HsnSoft.Base.Json.Newtonsoft.Mask;
 using HsnSoft.Base.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Hhs.Shared.Hosting.Microservices.Filters;
 
@@ -18,6 +20,7 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
     private readonly IResponseExceptionHandler _handler;
     private readonly IWebHostEnvironment _env;
     private readonly MicroserviceHostingSettings _settings;
+    private readonly JsonSerializerSettings _serializerSettings;
 
     public RequestResponseActionFilterAttribute(IBaseLogger logger,
         IResponseExceptionHandler handler,
@@ -29,6 +32,8 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
         _handler = handler;
         _env = env;
         _settings = settings.Value;
+
+        _serializerSettings = MaskedSerializationHelper.GetSettingsForMaskedSerialization();
     }
 
     public void OnActionExecuting(ActionExecutingContext context)
@@ -50,7 +55,9 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
 
         context.Result = new ContentResult
         {
-            Content = new BaseResponse { StatusCode = (int)HttpStatusCode.BadRequest, StatusMessages = messages }.ToJsonString(), StatusCode = (int)HttpStatusCode.BadRequest, ContentType = "application/json"
+            Content = JsonConvert.SerializeObject(new BaseResponse { StatusCode = (int)HttpStatusCode.BadRequest, StatusMessages = messages }, _serializerSettings),
+            StatusCode = (int)HttpStatusCode.BadRequest,
+            ContentType = "application/json"
         };
     }
 
@@ -66,7 +73,12 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
             context.Exception = null!;
             context.ExceptionDispatchInfo = null!;
             context.ExceptionHandled = true;
-            context.Result = new ContentResult { Content = new BaseResponse { StatusCode = code, StatusMessages = messages }.ToJsonString(), StatusCode = code, ContentType = "application/json" };
+            context.Result = new ContentResult
+            {
+                Content = JsonConvert.SerializeObject(new BaseResponse { StatusCode = code, StatusMessages = messages }, _serializerSettings),
+                StatusCode = code,
+                ContentType = "application/json"
+            };
         }
         else // Manipulate response data
         {
@@ -76,22 +88,22 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
 
             var newContent = context.Result switch
             {
-                ObjectResult or => JsonSerializer.Serialize(
+                ObjectResult or => JsonConvert.SerializeObject(
                     new BaseResponse<object>
                     {
                         StatusCode = (int)HttpStatusCode.OK,
                         StatusMessages = new List<string> { _handler.GetStatusCodeDescription((int)HttpStatusCode.OK) },
                         Payload = or.Value
                     }
-                ),
-                EmptyResult => JsonSerializer.Serialize(
+                    , _serializerSettings),
+                EmptyResult => JsonConvert.SerializeObject(
                     new BaseResponse
                     {
                         StatusCode = (int)HttpStatusCode.OK,
                         StatusMessages = new List<string> { _handler.GetStatusCodeDescription((int)HttpStatusCode.OK) }
                     }
-                ),
-                _ => JsonSerializer.Serialize(string.Empty)
+                    , _serializerSettings),
+                _ => JsonConvert.SerializeObject(string.Empty, _serializerSettings)
             };
 
             context.Result = new ContentResult
