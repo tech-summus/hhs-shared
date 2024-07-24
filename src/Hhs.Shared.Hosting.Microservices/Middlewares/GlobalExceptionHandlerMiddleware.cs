@@ -1,8 +1,10 @@
 using Hhs.Shared.Hosting.Microservices.Handlers;
 using HsnSoft.Base.Communication;
+using HsnSoft.Base.Json.Newtonsoft.Mask;
 using HsnSoft.Base.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace Hhs.Shared.Hosting.Microservices.Middlewares;
 
@@ -11,12 +13,15 @@ public sealed class GlobalExceptionHandlerMiddleware : IMiddleware
     private readonly IBaseLogger _logger;
     private readonly IResponseExceptionHandler _handler;
     private readonly IWebHostEnvironment _env;
+    private readonly JsonSerializerSettings _serializerSettings;
 
     public GlobalExceptionHandlerMiddleware(IResponseExceptionHandler handler, IWebHostEnvironment env, IBaseLogger logger)
     {
         _handler = handler;
         _env = env;
         _logger = logger;
+
+        _serializerSettings = MaskedSerializationHelper.GetSettingsForMaskedSerialization();
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -44,8 +49,12 @@ public sealed class GlobalExceptionHandlerMiddleware : IMiddleware
             _logger.LogError("GlobalExceptionHandlerMiddleware -> Error Message: {ErrorMessage}", exception.Message);
             var (code, messages) = _handler.Handle(exception, _env);
             response.StatusCode = code;
-            //await response.WriteAsJsonAsync(new BaseResponse { StatusCode = code, StatusMessages = messages });
-            await response.WriteAsync(new BaseResponse { StatusCode = code, StatusMessages = messages }.ToJsonString());
+
+            await response.WriteAsync(JsonConvert.SerializeObject(new BaseResponse
+            {
+                StatusCode = code,
+                StatusMessages = messages
+            }, _serializerSettings));
 
             #endregion
         }
@@ -77,16 +86,11 @@ public sealed class GlobalExceptionHandlerMiddleware : IMiddleware
                 #endregion
             }
 
-            // await response.WriteAsJsonAsync(new BaseResponse
-            // {
-            //     StatusCode = response.StatusCode,
-            //     StatusMessages = new List<string> { _handler.GetStatusCodeDescription(response.StatusCode) }
-            // });
-            await response.WriteAsync(new BaseResponse
+            await response.WriteAsync(JsonConvert.SerializeObject(new BaseResponse
             {
                 StatusCode = response.StatusCode,
                 StatusMessages = new List<string> { _handler.GetStatusCodeDescription(response.StatusCode) }
-            }.ToJsonString());
+            }, _serializerSettings));
         }
 
         if (!_env.IsHhsProduction() && response.StatusCode >= 400)
