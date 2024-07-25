@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
 
 namespace Hhs.Shared.Hosting.Microservices;
 
@@ -67,14 +68,23 @@ public static class MicroserviceHostExtensions
             .AddApplicationPart(type.Assembly)
             .AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
                 var hostingSettings = new MicroserviceHostingSettings();
                 configuration.Bind("HostingSettings", hostingSettings);
 
                 options.JsonSerializerOptions.WriteIndented = true;
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 if (hostingSettings.IgnoreNullValueForJsonResponse)
                 {
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
                 }
+            })
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             });
 
         services.AddSingleton<IResponseExceptionHandler, ResponseExceptionHandler>();

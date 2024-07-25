@@ -23,11 +23,19 @@ public sealed class GlobalExceptionHandlerMiddleware : IMiddleware
 
         _serializerSettings = new JsonSerializerSettings
         {
-            // ContractResolver = new CamelCasePropertyNamesContractResolver()
-            ContractResolver = new DefaultContractResolver() { NamingStrategy = new DefaultNamingStrategy() }
-            // ContractResolver = new DefaultContractResolver() { NamingStrategy = new CamelCaseNamingStrategy() }
-            // ContractResolver = new DefaultContractResolver() { NamingStrategy = new KebabCaseNamingStrategy() }
+            ContractResolver = new DefaultContractResolver() { NamingStrategy = new DefaultNamingStrategy() },
+            // ContractResolver = new DefaultContractResolver() { NamingStrategy = new CamelCaseNamingStrategy() },
+            // ContractResolver = new DefaultContractResolver() { NamingStrategy = new KebabCaseNamingStrategy() },
+            //ContractResolver = new DefaultContractResolver() { NamingStrategy = new SnakeCaseNamingStrategy() },
+
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            NullValueHandling = NullValueHandling.Ignore,
+
+            Formatting = Formatting.Indented
         };
+        // _serializerSettings.Converters.Add(new BaseTimeSpanConverter());
+        // _serializerSettings.Converters.Add(new ObjectIdConverter());
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
