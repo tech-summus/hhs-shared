@@ -1,7 +1,6 @@
 using System.Net;
 using Hhs.Shared.Hosting.Microservices.Handlers;
 using HsnSoft.Base.Communication;
-using HsnSoft.Base.Json.Newtonsoft.Mask;
 using HsnSoft.Base.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using JsonSerializer = System.Text.Json.JsonSerializer;
+using Newtonsoft.Json.Serialization;
 
 namespace Hhs.Shared.Hosting.Microservices.Filters;
 
@@ -33,7 +32,13 @@ public sealed class RequestResponseActionFilterAttribute : Attribute, IActionFil
         _env = env;
         _settings = settings.Value;
 
-        _serializerSettings = MaskedSerializationHelper.GetSettingsForMaskedSerialization();
+        _serializerSettings = new JsonSerializerSettings
+        {
+            // ContractResolver = new CamelCasePropertyNamesContractResolver()
+            ContractResolver = new DefaultContractResolver() { NamingStrategy = new DefaultNamingStrategy() }
+            // ContractResolver = new DefaultContractResolver() { NamingStrategy = new CamelCaseNamingStrategy() }
+            // ContractResolver = new DefaultContractResolver() { NamingStrategy = new KebabCaseNamingStrategy() }
+        };
     }
 
     public void OnActionExecuting(ActionExecutingContext context)
