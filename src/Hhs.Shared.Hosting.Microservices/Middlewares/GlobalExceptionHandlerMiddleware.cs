@@ -1,10 +1,10 @@
 using Hhs.Shared.Hosting.Microservices.Handlers;
 using HsnSoft.Base.Communication;
-using HsnSoft.Base.Json.Newtonsoft.Mask;
 using HsnSoft.Base.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Hhs.Shared.Hosting.Microservices.Middlewares;
 
@@ -21,7 +21,13 @@ public sealed class GlobalExceptionHandlerMiddleware : IMiddleware
         _env = env;
         _logger = logger;
 
-        _serializerSettings = MaskedSerializationHelper.GetSettingsForMaskedSerialization();
+        _serializerSettings = new JsonSerializerSettings
+        {
+            // ContractResolver = new CamelCasePropertyNamesContractResolver()
+            ContractResolver = new DefaultContractResolver() { NamingStrategy = new DefaultNamingStrategy() }
+            // ContractResolver = new DefaultContractResolver() { NamingStrategy = new CamelCaseNamingStrategy() }
+            // ContractResolver = new DefaultContractResolver() { NamingStrategy = new KebabCaseNamingStrategy() }
+        };
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
