@@ -15,7 +15,12 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
     private readonly HostingSettings _settings;
     private readonly IRequestResponseLogger _logger;
 
-    private readonly string[] _blacklist = { "password", "pwd", "clientsecret","accesstoken","refreshtoken" };
+    private readonly string[] _blacklist =
+    {
+        "password", "pwd", "clientsecret", "accesstoken", "refreshtoken",
+        "*payload.password", "*payload.pwd", "*payload.clientsecret", "*payload.accesstoken", "*payload.refreshtoken"
+    };
+
     private const string MaskValue = "******";
 
     public RequestResponseLoggerMiddleware(IOptions<HostingSettings> settings, IRequestResponseLogger logger)
