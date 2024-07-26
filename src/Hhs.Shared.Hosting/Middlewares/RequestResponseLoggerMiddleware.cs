@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Hhs.Shared.Hosting.Models;
 using HsnSoft.Base.AspNetCore.Logging;
 using HsnSoft.Base.AspNetCore.Tracing;
+using HsnSoft.Base.Json.Newtonsoft.Mask;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
