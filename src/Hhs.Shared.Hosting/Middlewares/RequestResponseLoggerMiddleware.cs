@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Hhs.Shared.Hosting.Models;
 using HsnSoft.Base.AspNetCore.Logging;
 using HsnSoft.Base.AspNetCore.Tracing;
+using HsnSoft.Base.Json.Newtonsoft.Mask;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
@@ -13,6 +14,9 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
 {
     private readonly HostingSettings _settings;
     private readonly IRequestResponseLogger _logger;
+
+    private readonly string[] _blacklist = { "password", "pwd", "clientsecret","accesstoken","refreshtoken" };
+    private const string MaskValue = "******";
 
     public RequestResponseLoggerMiddleware(IOptions<HostingSettings> settings, IRequestResponseLogger logger)
     {
@@ -132,7 +136,7 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         log.ResponseInfo = new ResponseInfoLogDetail
         {
             ResponseStatus = response.StatusCode.ToString(),
-            ResponseBody = responseBodyText,
+            ResponseBody = responseBodyText.MaskFields(_blacklist, MaskValue),
             ResponseDateTimeUtc = DateTime.UtcNow
         };
 
@@ -204,7 +208,8 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         // Reset the request's body stream position for
         // next middleware in the pipeline.
         request.Body.Position = 0;
-        return requestBody;
+
+        return requestBody.MaskFields(_blacklist, MaskValue);
     }
 
     private async Task<IpLookupLogDetail> GetIpDetails(string ipAddress)

@@ -14,7 +14,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.7" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
         <PackageReference Include="Serilog.Sinks.Async" Version="2.0.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
@@ -31,12 +30,12 @@
         <PackageReference Include="HsnSoft.Base.AspNetCore.Serilog" Version="$(HsnSoftFrameworkVersion)" />
         <PackageReference Include="HsnSoft.Base.Swashbuckle" Version="$(HsnSoftFrameworkVersion)" />
         <PackageReference Include="HsnSoft.Base.Data" Version="$(HsnSoftFrameworkVersion)" />
-        <PackageReference Include="HsnSoft.Base.Json.Newtonsoft" Version="$(HsnSoftFrameworkVersion)" />
+        <PackageReference Include="HsnSoft.Base.Json" Version="$(HsnSoftFrameworkVersion)" />
         <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.AspNetCore.Authentication.JwtBearer\HsnSoft.Base.AspNetCore.Authentication.JwtBearer.csproj"/>-->
         <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.AspNetCore.Serilog\HsnSoft.Base.AspNetCore.Serilog.csproj"/>-->
         <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.Swashbuckle\HsnSoft.Base.Swashbuckle.csproj"/>-->
         <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.Data\HsnSoft.Base.Data.csproj"/>-->
-        <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.Json.Newtonsoft\HsnSoft.Base.Json.Newtonsoft.csproj"/>-->
+        <!--<ProjectReference Include="..\..\..\..\..\hsn-soft\base-framework\src\HsnSoft.Base.Json\HsnSoft.Base.Json.csproj"/>-->
     </ItemGroup>
 
 </Project>
