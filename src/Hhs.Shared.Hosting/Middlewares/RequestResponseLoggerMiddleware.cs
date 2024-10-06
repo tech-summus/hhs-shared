@@ -127,6 +127,10 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
 
         newResponseBody.Seek(0, SeekOrigin.Begin);
         var responseBodyText = await new StreamReader(newResponseBody).ReadToEndAsync();
+        if (!string.IsNullOrWhiteSpace(responseBodyText) && (responseBodyText.StartsWith("{") || responseBodyText.StartsWith("[")) && (responseBodyText.EndsWith("}") || responseBodyText.EndsWith("]")))
+        {
+            responseBodyText = responseBodyText.MaskFields(_blacklist, MaskValue);
+        }
 
         newResponseBody.Seek(0, SeekOrigin.Begin);
         await newResponseBody.CopyToAsync(originalResponseBody);
@@ -141,7 +145,7 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         log.ResponseInfo = new ResponseInfoLogDetail
         {
             ResponseStatus = response.StatusCode.ToString(),
-            ResponseBody = responseBodyText.MaskFields(_blacklist, MaskValue),
+            ResponseBody = responseBodyText,
             ResponseDateTimeUtc = DateTime.UtcNow
         };
 
@@ -214,7 +218,12 @@ public sealed class RequestResponseLoggerMiddleware : IMiddleware
         // next middleware in the pipeline.
         request.Body.Position = 0;
 
-        return requestBody.MaskFields(_blacklist, MaskValue);
+        if (!string.IsNullOrWhiteSpace(requestBody) && (requestBody.StartsWith("{") || requestBody.StartsWith("[")) && (requestBody.EndsWith("}") || requestBody.EndsWith("]")))
+        {
+            return requestBody.MaskFields(_blacklist, MaskValue);
+        }
+
+        return requestBody;
     }
 
     private async Task<IpLookupLogDetail> GetIpDetails(string ipAddress)
